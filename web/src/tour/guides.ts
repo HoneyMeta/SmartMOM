@@ -46,10 +46,10 @@ export const GUIDES: Guide[] = [
       { id: 'r', title: $t('common.approve2'), target: [T('ai-drafts'), OFF], do: $t('guides.youCanEditEquipmentMeaning') },
       { id: 's', title: $t('guides.suspiciousTags'), target: [T('ai-suspicious'), OFF], do: $t('guides.noAiNeededValuesThat') }]),
   // ---------------- Welcome ----------------
-  { key: 'welcome', title: $t('guides.welcomeToHoneymom'), kind: 'welcome', desc: $t('guides.getToKnowTheInterface'), routes: [], kw: $t('guides.welcomeNewUserGettingStarted'),
+  { key: 'welcome', title: $t('guides.welcomeToSmartmom'), kind: 'welcome', desc: $t('guides.getToKnowTheInterface'), routes: [], kw: $t('guides.welcomeNewUserGettingStarted'),
     outro: $t('guides.thatSItFromNow'),
     steps: [
-      M({ id: 'hi', title: $t('common.welcome'), route: '/', do: $t('guides.honeymomBringsProductionQualityEquip') }),
+      M({ id: 'hi', title: $t('common.welcome'), route: '/', do: $t('guides.smartmomBringsProductionQualityEquip') }),
       M({ id: 'nav', title: $t('guides.leftMenu'), target: [S('[data-test=side-nav]'), S('.hm-nav')], do: $t('guides.groupedByBusinessAreaProduction') }),
       M({ id: 'cmd', title: $t('guides.searchAnything'), target: [S('[data-test=cmd-bar]')], do: $t('guides.pressCtrlKSearchPages') }),
       M({ id: 'clock', title: $t('guides.dataClockCollectionStatus'), target: [S('[data-test=data-clock]'), S('[data-test=conn-status]')], do: $t('guides.timeIsBasedOnData') }),

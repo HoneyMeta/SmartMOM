@@ -1,7 +1,7 @@
 <template>
   <div class="mob" data-test="mobile">
     <header class="hd">
-      <img src="/brand/mark.svg" alt="" class="mk" /><b>{{ $t('common.honeymom') }}</b>
+      <img src="/brand/mark.svg" alt="" class="mk" /><b>{{ $t('common.smartmom') }}</b>
       <span v-if="!online" class="off" data-test="m-offline">{{ $t('common.offline') }}</span>
       <span class="grow" />
       <span class="me">{{ session.user?.name }}</span>

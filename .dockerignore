@@ -1,4 +1,4 @@
-# Build context for the Dockerfile: only requirements, honeymom/, replayer/, config/llm.example.json and web/ are used.
+# Build context for the Dockerfile: only requirements, smartmom/, honeymom/ (deprecated alias), replayer/, config/llm.example.json and web/ are used.
 .git
 .github
 .gitignore

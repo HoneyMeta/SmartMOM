@@ -1,5 +1,5 @@
-# HoneyMOM plant data replayer - SPDX-License-Identifier: AGPL-3.0-or-later
-"""python -m replayer [run] [options]      replay a recording (default)
+# SmartMOM plant data replayer - SPDX-License-Identifier: AGPL-3.0-or-later
+"""python -m replayer [run] [options]      replay a recording (default; --forward-to HOST relays to a live simulator)
 python -m replayer package --out x.zip   write the delivery package with endpoints pointing at the replayer
 python -m replayer info                  show what a recording contains
 python -m replayer record ...            capture a live source into a raw capture file (maintainers)
@@ -17,7 +17,7 @@ DEFAULT_REC = os.path.join(HERE, 'recordings', 'foundry-housing.jsonl.gz')
 
 def default_package(plant='foundry-housing'):
     for p in (os.path.join(HERE, 'recordings', f'{plant}.package.zip'),
-              os.path.join(os.path.dirname(HERE), 'honeymom', 'fixtures', 'delivery', f'{plant}.zip')):
+              os.path.join(os.path.dirname(HERE), 'smartmom', 'fixtures', 'delivery', f'{plant}.zip')):
         if os.path.exists(p):
             return p
     return None
@@ -53,6 +53,10 @@ def main(argv=None):
         ap.add_argument('--timestamps', choices=('sim', 'wall'), default='sim',
                         help='sim: ts advance at --speed x real time like an accelerated simulator (cycle times stay true); '
                              'wall: ts = the wall clock at publish (durations shrink by --speed)')
+        ap.add_argument('--forward-to', default='', metavar='HOST',
+                        help='if HOST resolves (the SimFactory container of the Compose profile "factory"), relay the MQTT, '
+                             'OPC UA, Modbus and --forward-http-port ports to the same ports on HOST instead of playing back')
+        ap.add_argument('--forward-http-port', type=int, default=8800, help='web/API port relayed in forward mode (0 = off)')
     elif cmd == 'record':
         ap.add_argument('--package', default=default_package(), help='delivery package of the source (point table)')
         ap.add_argument('--plant', default=None)
@@ -86,9 +90,13 @@ def main(argv=None):
     for noisy in ('asyncua', 'amqtt', 'transitions', 'pymodbus'):
         logging.getLogger(noisy).setLevel(logging.WARNING)
     if cmd == 'run':
+        from .forward import resolves, run_forward
         from .play import run
+        forward = bool(a.forward_to) and resolves(a.forward_to)
+        if a.forward_to and not forward:
+            logging.getLogger('replayer').info('%s does not resolve: playing back the recording', a.forward_to)
         try:
-            asyncio.run(run(a))
+            asyncio.run(run_forward(a) if forward else run(a))
         except KeyboardInterrupt:
             pass
     elif cmd == 'record':

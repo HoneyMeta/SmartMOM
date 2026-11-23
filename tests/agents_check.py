@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import sqlalchemy as sa  # noqa: E402
 
-from honeymom import db  # noqa: E402
+from smartmom import db  # noqa: E402
 
 SRC = os.path.join(db.ROOT, 'data', 'mes.db')
 TMP = os.path.join(tempfile.mkdtemp(prefix='mes_agent_'), 'mes.db')
@@ -28,11 +28,11 @@ if os.path.exists(SRC):
     s.close()
     d.close()
 db.init('sqlite:///' + TMP.replace('\\', '/'))
-from honeymom import seed  # noqa: E402
+from smartmom import seed  # noqa: E402
 
 seed.run()
-from honeymom.agent import api, engine, runtime, templates  # noqa: E402
-from honeymom.schema import TABLES, agent_action_t, agent_run_t, agent_step_t, approval_t  # noqa: E402
+from smartmom.agent import api, engine, runtime, templates  # noqa: E402
+from smartmom.schema import TABLES, agent_action_t, agent_run_t, agent_step_t, approval_t  # noqa: E402
 
 REAL = '--real-llm' in sys.argv
 results = []
@@ -330,7 +330,7 @@ ev = api.events(aid, user=ADMIN)
 outc = {e['outcome'] for e in ev}
 ok('触发记录（合并/冷却/启动/排除）', {'merged', 'cooldown', 'started', 'filtered'} <= outc, str(sorted(outc)))
 # 通过采集入库的同一条路触发
-from honeymom.ingest import ING  # noqa: E402
+from smartmom.ingest import ING  # noqa: E402
 ING.reload()
 with db.engine.connect() as c:
     eq = db.get(c, 'equipment', code='CNC6')
@@ -353,7 +353,7 @@ if eq:
     ok('触发的运行停在设备员审批', st == 'waiting', st)
 
 # ---------------- 右下角助手：工具按角色给、拒绝作为结果、数字核对、令牌 ----------------
-from honeymom.services import assistant as AS  # noqa: E402
+from smartmom.services import assistant as AS  # noqa: E402
 
 QC = {'username': 'qc', 'name': '质检员', 'role_list': ['qc']}
 
@@ -375,7 +375,7 @@ ok('写工具先检查：设备不存在就不出确认卡', 'error' in res and 
 res, ev = AS._call(MAINT, 1, 'propose_repair_order', {'equipment': 'CNC1', 'fault': '主轴异响'}, ['repair_order'], [])
 card = ev[0][1] if ev else {}
 t = AS.read_token(card.get('token', ''))
-ok('确认卡的令牌绑定内容和数据状态', t and t['fp'] == __import__('honeymom.services.ops', fromlist=['x']).fingerprint(card['payload']) and t['st'], t and t['st'])
+ok('确认卡的令牌绑定内容和数据状态', t and t['fp'] == __import__('smartmom.services.ops', fromlist=['x']).fingerprint(card['payload']) and t['st'], t and t['st'])
 ok('数字核对：查到的数（含百分比换算）不算编造', AS.ungrounded('CNC2 停机 18.7 分钟，OEE 87.3%', '{"minutes": 18.73, "OEE": 0.873}') == [])
 ok('数字核对：没查过的数会被找出来', AS.ungrounded('今天产量 523 件', '{"n": 12}') == ['523'])
 

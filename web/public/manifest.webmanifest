@@ -1,6 +1,6 @@
 {
-  "name": "蜂元智能 MOM 手机端",
-  "short_name": "蜂元智能 MOM",
+  "name": "SmartMOM 智能 MOM 手机端",
+  "short_name": "SmartMOM",
   "description": "扫码报工、我的任务、报修、点检、首检、查询、通知、我的日报",
   "lang": "zh-CN",
   "start_url": "/m?source=pwa",

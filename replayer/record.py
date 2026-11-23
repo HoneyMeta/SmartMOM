@@ -1,4 +1,4 @@
-# HoneyMOM plant data replayer - SPDX-License-Identifier: AGPL-3.0-or-later
+# SmartMOM plant data replayer - SPDX-License-Identifier: AGPL-3.0-or-later
 """Capture live plant traffic (MQTT + OPC UA + Modbus TCP) into a raw capture file (gzip JSONL).
 
 Works against any source that follows the delivery-package point table: subscribes to the MQTT topic prefix, subscribes

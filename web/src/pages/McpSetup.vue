@@ -22,7 +22,7 @@
 
       <HmCard :title="$t('mcpSetup.n2ConnectYourAiTool')" :sub="info ? $t('mcpSetup.url0StreamableHttpProtocol', [info.endpoint, info.versions.join(' / ')]) : ''" data-tour="mcp-clients">
         <el-tabs v-model="tab" data-test="mcp-tabs">
-          <el-tab-pane label="Claude Desktop" name="claude"><pre class="cfg">{{ snip.claude }}</pre><p class="muted small">{{ $t('mcpSetup.claudeDesktopUsesStdioRun') }} <code>python -m honeymom mcp</code>{{ $t('mcpSetup.forRemoteConnectionsUseThe') }}</p></el-tab-pane>
+          <el-tab-pane label="Claude Desktop" name="claude"><pre class="cfg">{{ snip.claude }}</pre><p class="muted small">{{ $t('mcpSetup.claudeDesktopUsesStdioRun') }} <code>python -m smartmom mcp</code>{{ $t('mcpSetup.forRemoteConnectionsUseThe') }}</p></el-tab-pane>
           <el-tab-pane label="Cursor" name="cursor"><pre class="cfg">{{ snip.cursor }}</pre><p class="muted small">{{ $t('mcpSetup.putItInTheProject') }}</p></el-tab-pane>
           <el-tab-pane label="Dify" name="dify"><pre class="cfg">{{ snip.dify }}</pre><p class="muted small">{{ $t('mcpSetup.difyToolsMcpAddMcp') }}</p></el-tab-pane>
           <el-tab-pane :label="$t('mcpSetup.genericCurl')" name="curl"><pre class="cfg">{{ snip.curl }}</pre></el-tab-pane>
@@ -77,8 +77,8 @@ const K = computed(() => newKey.value || $t('mcpSetup.hmkYourKey'));
 const snip = computed(() => {
   const url = info.value?.endpoint || $t('mcpSetup.httpServer8900Mcp');
   return {
-    claude: JSON.stringify({ mcpServers: { honeymom: { command: 'python', args: ['-m', 'honeymom', 'mcp'], cwd: 'D:\\HoneyMOM', env: { HONEYMOM_API_KEY: K.value, MOM_DATA: 'D:\\HoneyMOM\\data' } } } }, null, 2),
-    cursor: JSON.stringify({ mcpServers: { honeymom: { url, headers: { 'X-API-Key': K.value } } } }, null, 2),
+    claude: JSON.stringify({ mcpServers: { smartmom: { command: 'python', args: ['-m', 'smartmom', 'mcp'], cwd: 'D:\\SmartMOM', env: { MOM_API_KEY: K.value, MOM_DATA: 'D:\\SmartMOM\\data' } } } }, null, 2),
+    cursor: JSON.stringify({ mcpServers: { smartmom: { url, headers: { 'X-API-Key': K.value } } } }, null, 2),
     dify: $t('mcpSetup.serverUrl0TransportStreamable', [url, K.value]),
     curl: `curl -s ${url} -H "X-API-Key: ${K.value}" -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" \\\n  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"cycle_analysis","arguments":{"period":"yesterday"}}}'`,
   };

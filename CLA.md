@@ -1,9 +1,9 @@
-# HoneyMOM Individual Contributor License Agreement
+# SmartMOM Individual Contributor License Agreement
 
 Version 1.0
 
-Thank you for your interest in contributing to HoneyMOM (the "Project"), maintained by 蜂元科技（郑州）有限责任公司
-(HoneyMeta Technology (Zhengzhou) Co., Ltd.; "HoneyMeta", "we" or "us"). HoneyMOM is published under the GNU Affero General Public License v3.0 or later and is
+Thank you for your interest in contributing to SmartMOM (the "Project"), maintained by 蜂元科技（郑州）有限责任公司
+(HoneyMeta Technology (Zhengzhou) Co., Ltd.; "HoneyMeta", "we" or "us"). SmartMOM is published under the GNU Affero General Public License v3.0 or later and is
 also offered under commercial licenses (see [COMMERCIAL-LICENSE.md](COMMERCIAL-LICENSE.md)). To keep both options
 possible, we need the right to license every contribution under the AGPL and under other terms. This agreement gives
 us that right. You keep the copyright in your contribution.
@@ -19,7 +19,7 @@ allowed to (see section 5) or contact dev@honeymeta.com about a corporate agreem
   Project that You submit.
 - **"Submit"** means any form of communication sent to the Project or its maintainers, including pull requests,
   patches, issues and comments that contain code or text intended for inclusion, sent through the Project's
-  repositories (GitHub HoneyMeta/HoneyMOM and its mirrors), mailing lists or e-mail. A communication that You mark in
+  repositories (GitHub HoneyMeta/SmartMOM and its mirrors), mailing lists or e-mail. A communication that You mark in
   writing as "Not a Contribution" is not a Contribution.
 
 ## 2. Copyright license

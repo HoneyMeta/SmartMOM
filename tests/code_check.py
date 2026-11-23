@@ -21,7 +21,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.dirname(HERE))
 TMP = tempfile.mkdtemp(prefix='hm_code_')
 os.environ['HM_DATA'] = TMP
-from honeymom import db  # noqa: E402
+from smartmom import db  # noqa: E402
 
 results = []
 

@@ -43,7 +43,7 @@
 
 <script setup lang="ts">
 import { $t } from '../../i18n';
-// Alerts & AI Watch feed: rule alerts (alarms, Andon, overdue work orders, nonconformances, PM, cutting tools, shortages) + AI Watch findings (GET /api/home/feed; providers in honeymom/services/home_feed.py).
+// Alerts & AI Watch feed: rule alerts (alarms, Andon, overdue work orders, nonconformances, PM, cutting tools, shortages) + AI Watch findings (GET /api/home/feed; providers in smartmom/services/home_feed.py).
 // Each card has v-ai (kind=alert): Ctrl+click / right-click hands it to AI; "Ask AI" asks with this card attached. Entries with kind='ai' render via ai/WatchFeed.vue (AI Watch component) if present.
 import { computed, defineAsyncComponent, ref } from 'vue';
 import { useRouter } from 'vue-router';

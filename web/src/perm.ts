@@ -1,4 +1,4 @@
-// Frontend permissions: same rules as backend honeymom/perms.py (see docs/dev/foundation.md "Permissions").
+// Frontend permissions: same rules as backend smartmom/perms.py (see docs/dev/foundation.md "Permissions").
 //   can('quality.ncr.update')            whether the current user has this permission
 //   entPerm('ncr', 'update')            entity permission (module key from /api/meta) → 'quality.ncr.update'
 //   pagePerm('/quality/spc')            page permission: /e/<entity> → entity read; / → page.home; others → page.a.b

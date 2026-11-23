@@ -39,7 +39,7 @@
         <HmCard :title="$t('adminBackups.productionRestoreCommandLine')">
           <ol class="steps">
             <li>{{ $t('adminBackups.pickABackupWhoseDrill') }}</li>
-            <li>{{ $t('adminBackups.onTheServerRestoreInto') }}<b>{{ $t('adminBackups.newDirectory') }}</b>{{ $t('common.k384') }}<pre>{{ $t('adminBackups.pythonMHoneymomRestoreBackup', [dialect === 'postgresql' ? $t('adminBackups.toDbPostgresqlPsycopgUser') : '']) }}</pre></li>
+            <li>{{ $t('adminBackups.onTheServerRestoreInto') }}<b>{{ $t('adminBackups.newDirectory') }}</b>{{ $t('common.k384') }}<pre>{{ $t('adminBackups.pythonMSmartmomRestoreBackup', [dialect === 'postgresql' ? $t('adminBackups.toDbPostgresqlPsycopgUser') : '']) }}</pre></li>
             <li>{{ $t('adminBackups.checkThatEveryItemIn') }}</li>
             <li>{{ $t('adminBackups.stopTheServicePointHm', [dialect === 'postgresql' ? ' / MOM_DB' : '', dialect === 'postgresql' ? $t('adminBackups.andANewDatabase') : '']) }}</li>
           </ol>

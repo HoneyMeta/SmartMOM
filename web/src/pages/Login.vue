@@ -1,7 +1,7 @@
 <template>
   <div class="login hm-grid-bg">
     <div class="side">
-      <div class="brand"><img src="/brand/mark.svg" alt="" /><div><b>{{ $t('common.honeymom') }}</b><small>{{ $t('topBar.manufacturingOperationsManagement') }}</small></div></div>
+      <div class="brand"><img src="/brand/mark.svg" alt="" /><div><b>{{ $t('common.smartmomFull') }}</b><small>{{ $t('topBar.manufacturingOperationsManagement') }}</small></div></div>
       <h1>{{ $t('login.everyPartEveryHeatEvery') }}<br />{{ $t('login.visible') }}<span class="ai">{{ $t('login.andExplainedByAi') }}</span>{{ $t('home.k3429') }}</h1>
       <ul class="pts">
         <li><i />{{ $t('login.productionQualityMaintenanceInventor') }}</li>

@@ -5,7 +5,7 @@
   MES_URL        MES 地址（默认 http://127.0.0.1:8900）
   VF_URL         虚拟工厂地址（给了就跑"气缸漏气"端到端：导入交付包 → 自动识别动作 → 学基线 → 注入漏气 → 找到工位和动作、算损失）
   MCP_SDK_PATH   官方 MCP Python SDK（pip 包 mcp）装在的目录：给了就用 SDK 当客户端再核对一遍（HTTP + stdio）
-  AI50_PY / AI50_LAUNCHER / AI50_CWD   stdio 测试用的 python、启动方式（如 run_m6_hm.py 或 "-m honeymom"）、工作目录；HM_DATA / MES_DB 跟服务端一致
+  AI50_PY / AI50_LAUNCHER / AI50_CWD   stdio 测试用的 python、启动方式（如 run_m6_hm.py 或 "-m smartmom"）、工作目录；HM_DATA / MES_DB 跟服务端一致
   AI50_SKIP      逗号分隔跳过的节：mcp,scope,synth,skills,vf
 AI 用演示模式（回放录制，不花 token）；结束时恢复原来的 AI 开关。
 """
@@ -114,7 +114,7 @@ if 'mcp' not in SKIP:
     sid = h.get('mcp-session-id')
     ok('MCP initialize：协商到客户端的版本', st == 200 and r.get('protocolVersion') == '2025-06-18', r.get('protocolVersion'))
     ok('MCP initialize：能力 tools / resources / prompts + serverInfo + 说明', all(k in r.get('capabilities', {}) for k in ('tools', 'resources', 'prompts'))
-       and r.get('serverInfo', {}).get('name') == 'honeymom' and r.get('instructions'), r.get('capabilities'))
+       and r.get('serverInfo', {}).get('name') == 'smartmom' and r.get('instructions'), r.get('capabilities'))
     ok('MCP initialize：返回 Mcp-Session-Id', bool(sid))
     st, h, j = mcp(KEY, 'initialize', {'protocolVersion': '1999-01-01'})
     ok('MCP initialize：不认识的版本 → 回服务端最新版本', res_of(j).get('protocolVersion') == '2025-11-25', res_of(j).get('protocolVersion'))
@@ -243,7 +243,7 @@ if 'mcp' not in SKIP:
                 o = json.loads((p.stdout or '').strip().splitlines()[-1])
             except (ValueError, IndexError):
                 o = {'ok': False, 'error': (p.stderr or p.stdout)[-400:]}
-            ok('官方 MCP SDK（stdio：python -m honeymom mcp）', o.get('ok') and 'factory_model' in o.get('tools', []), {k: o.get(k) for k in ('protocol', 'error')})
+            ok('官方 MCP SDK（stdio：python -m smartmom mcp）', o.get('ok') and 'factory_model' in o.get('tools', []), {k: o.get(k) for k in ('protocol', 'error')})
     else:
         print('（没有 MCP_SDK_PATH：跳过官方 SDK 客户端核对）')
 

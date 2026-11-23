@@ -3,7 +3,7 @@
     <div class="stage" :style="stageStyle">
       <!-- Top bar -->
       <header class="top">
-        <div class="brand"><img src="/brand/mark.svg" alt="" /><div><h1>{{ company }}</h1><small>{{ $t('screen.honeymomManufacturingCommandCenter') }}</small></div></div>
+        <div class="brand"><img src="/brand/mark.svg" alt="" /><div><h1>{{ company }}</h1><small>{{ $t('screen.smartmomManufacturingCommandCenter') }}</small></div></div>
         <nav class="scenes" role="tablist" :aria-label="$t('screen.displayPages')">
           <button v-for="(s, i) in SCENES" :key="s.id" role="tab" :aria-selected="i === cur" :class="{ on: i === cur }" :data-scene-tab="i" @click="go(i)">
             <span>{{ s.label }}</span><i v-if="i === cur && !paused" class="prog" :style="{ animationDuration: interval + 's' }" :key="tick" />
@@ -208,7 +208,7 @@ const ck = computed(() => cockpit.data.value), K = computed(() => ck.value?.kpi)
 const liveItems = computed(() => live.data.value?.items || []);
 const now = computed(() => live.data.value?.now || ck.value?.now || '');
 const dataClock = computed(() => !!now.value);
-const company = computed(() => ck.value?.company || session.user?.company || $t('home.honeymom'));
+const company = computed(() => ck.value?.company || session.user?.company || $t('home.smartmom'));
 const orders = computed(() => ck.value?.orders || []);
 
 // Carousel

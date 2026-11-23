@@ -1,4 +1,4 @@
-// HoneyMOM design system entry. app.use(installDesign) in main.ts: globally registers Hm* components and v-ai / v-ai-rows directives.
+// SmartMOM design system entry. app.use(installDesign) in main.ts: globally registers Hm* components and v-ai / v-ai-rows directives.
 import type { App } from 'vue';
 import { vAi, vAiRows } from '../ai/directive';
 import HmCard from './components/HmCard.vue';

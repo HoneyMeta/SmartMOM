@@ -2,7 +2,7 @@
 // AI 体验（4.7）界面走查（Playwright）：演示模式下 AI 面板的结构化回答（图表 + 数据来源）、右键"解释这个数"、
 // 动作草稿（右键派维修 → 通过 = 建单；驳回 = 什么都不做）、一句话自动化（解析 → 回放 → 启用）、AI 值守发现、日报（渲染 + 导出 PDF）、
 // AI 全关时各入口干净地关闭；并截图。
-// 用法（B 机，MES 已启动且有数据，比如先跑过 tests/e2e.py；演示录制在 honeymom/fixtures/ai_demo/）：node tests/ai_ui.js
+// 用法（B 机，MES 已启动且有数据，比如先跑过 tests/e2e.py；演示录制在 smartmom/fixtures/ai_demo/）：node tests/ai_ui.js
 //   环境变量 MES_URL（默认 http://127.0.0.1:8900）；截图在 data/ui_shots/ai/（SHOTS_DIR 可改）。结束时恢复原来的 AI 开关。
 const path = require('path');
 const fs = require('fs');

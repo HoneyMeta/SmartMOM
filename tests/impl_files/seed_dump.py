@@ -100,7 +100,7 @@ if __name__ == '__main__':
     os.environ['HM_DATA'] = tmp
     sys.path.insert(0, code_dir)
     sys.path = [p for p in sys.path if 'works' not in p]
-    from honeymom import db as _db, schema as _schema, seed as _seed  # noqa: E402
+    from smartmom import db as _db, schema as _schema, seed as _seed  # noqa: E402
     _db.init('sqlite:///' + os.path.join(tmp, 'mes.db').replace('\\', '/'))
     res = run(_db, _seed, _schema)
     res['entities'] = [e.name for e in _schema.ENTITIES]

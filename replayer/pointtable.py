@@ -1,4 +1,4 @@
-# HoneyMOM plant data replayer - SPDX-License-Identifier: AGPL-3.0-or-later
+# SmartMOM plant data replayer - SPDX-License-Identifier: AGPL-3.0-or-later
 """Reads a delivery package (zip with points.xlsx = sheets 设备 / 点表 / 协议 / 说明) and rewrites its endpoints."""
 import io
 import re

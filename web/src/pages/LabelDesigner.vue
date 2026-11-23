@@ -627,7 +627,7 @@ async function testDev(ent: 'printer' | 'marker', row: any) {
   try {
     if (ent === 'printer' && row.kind === 'browser') {
       await openPdf('/api/label/preview', { width_mm: 60, height_mm: 40, format: 'pdf', data: {}, layout: { elements: [
-        { type: 'box', x: 1, y: 1, w: 58, h: 38, t: 0.4 }, { type: 'text', x: 4, y: 3, h: 4, text: $t('labelDesigner.honeymomTestPrint'), bold: true },
+        { type: 'box', x: 1, y: 1, w: 58, h: 38, t: 0.4 }, { type: 'text', x: 4, y: 3, h: 4, text: $t('labelDesigner.smartmomTestPrint'), bold: true },
         { type: 'text', x: 4, y: 9, h: 2.8, text: `${row.code}  ${new Date().toLocaleString(intlLocale)}` }, { type: 'barcode', x: 4, y: 15, w: 34, h: 10, symbology: 'code128', data: 'TEST-' + row.code, hr: true },
         { type: 'barcode', x: 44, y: 15, w: 12, h: 12, symbology: 'datamatrix', data: 'TEST-' + row.code }] } });
       return;

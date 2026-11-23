@@ -1,4 +1,4 @@
-# HoneyMOM plant data replayer - SPDX-License-Identifier: AGPL-3.0-or-later
+# SmartMOM plant data replayer - SPDX-License-Identifier: AGPL-3.0-or-later
 """The three protocol endpoints of the replayer: an embedded MQTT broker (amqtt), an OPC UA server (asyncua) rebuilt from the
 address-space metadata stored in the recording, and a Modbus TCP server (pymodbus) holding the recorded register image."""
 import asyncio
@@ -50,7 +50,7 @@ class OpcUaServer:
         s = self.server = Server()
         await s.init()
         s.set_endpoint(self.endpoint)
-        s.set_server_name('HoneyMOM plant replayer')
+        s.set_server_name('SmartMOM plant replayer')
         s.set_security_policy([ua.SecurityPolicyType.NoSecurity])
         for uri in self.meta['namespaces'][2:]:
             idx = await s.register_namespace(uri)

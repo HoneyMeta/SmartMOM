@@ -62,7 +62,7 @@ def sse(p, body):
 
 # ---------------- 0. 纯函数：块协议解析和数字核对 ----------------
 try:
-    from honeymom.services import ai_blocks
+    from smartmom.services import ai_blocks
     text, blocks = ai_blocks.split_answer('结论：CNC3 最低。\n```blocks\n[{"type":"chart","kind":"bar","title":"OEE","x":["CNC1","CNC3"],"series":[{"name":"OEE","data":[0.82,0.61]}],"format":"pct"},'
                                           '{"type":"kpis","items":[{"label":"废品率","value":"2.3%","delta":-0.004,"good":"down"}]},{"type":"bogus"}]\n```\n')
     ok('块协议：解析 ```blocks``` 代码块', text == '结论：CNC3 最低。' and [b['type'] for b in blocks] == ['chart', 'kpis'] and blocks[1]['items'][0]['value'] == 0.023, blocks)

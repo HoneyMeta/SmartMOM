@@ -36,7 +36,7 @@ import sqlalchemy as sa  # noqa: E402
 from fastapi import HTTPException  # noqa: E402
 from starlette.requests import Request  # noqa: E402
 
-from honeymom import audit, auth, crud, db, schema, seed  # noqa: E402
+from smartmom import audit, auth, crud, db, schema, seed  # noqa: E402
 
 results = []
 
@@ -66,10 +66,10 @@ def raises(fn, code=None):
 
 
 db.init(URL)
-from honeymom.app import build_app  # noqa: E402
+from smartmom.app import build_app  # noqa: E402
 build_app()            # 登记各业务模块的实体动作、钩子（工单下达等），和服务里一样
-from honeymom.impl import cf, flows, forms, importer as imp, packs, reports, uom  # noqa: E402
-from honeymom.impl import api as iapi  # noqa: E402
+from smartmom.impl import cf, flows, forms, importer as imp, packs, reports, uom  # noqa: E402
+from smartmom.impl import api as iapi  # noqa: E402
 flows.install()
 forms.install()
 packs.install()
@@ -83,7 +83,7 @@ if ONLY_PACK:
     with db.engine.connect() as c:
         empty_after_preview = not db.rows(c, 'material', limit=1) and not db.rows(c, 'process', limit=1)
     r = packs.apply([ONLY_PACK], demo=True, user=admin)
-    from honeymom.schema import BY_NAME
+    from smartmom.schema import BY_NAME
     with db.engine.connect() as c:
         counts = {e: len(db.rows(c, e)) for e in ('process', 'material', 'bom', 'route_step', 'equipment', 'maint_plan', 'stock', 'employee', 'defect_code',
                                                   'insp_item', 'work_order')}
@@ -101,7 +101,7 @@ db.clock.data_now = seed_dump.CLOCK
 with db.engine.begin() as c:
     packs.apply(packs.DEMO_PACKS, demo=True, conn=c)
     seed.ensure_users(c)
-    from honeymom import seed_biz
+    from smartmom import seed_biz
     seed_biz.run(c)
 snap1 = seed_dump.dump(db, schema, FIX['entities'])
 with db.engine.begin() as c:
@@ -136,7 +136,7 @@ for phase, snap in (('seed', snap1), ('after_equipment', snap2)):
     ok(f'{phase}：每个 4.7 实体逐行一致（{len(FIX["entities"])} 个实体）', not bad, ', '.join(bad))
 wo = snap1['work_order']
 ok('演示工单 3 张、计划时间相对数据时钟', len(wo) == 3 and wo[0]['start_plan'] == '2026-11-04 09:00:00', [w['start_plan'] for w in wo])
-from honeymom.schema import BY_NAME  # noqa: E402
+from smartmom.schema import BY_NAME  # noqa: E402
 OLD_PT = ['melting', 'treatment', 'molding', 'cooling', 'cleaning', 'receiving', 'machining', 'deburr', 'inspection', 'storage', 'other']
 pt = list(next(f for f in BY_NAME['process'].fields if f.name == 'ptype').enum)
 ok('工序类型选项和 4.7 一样（同样的顺序）', pt == OLD_PT, pt)
@@ -147,7 +147,7 @@ admin = auth.user_by_name('admin')
 planner = auth.user_by_name('planner')
 manager = auth.user_by_name('manager')
 qc = auth.user_by_name('qc')
-from honeymom import context  # noqa: E402
+from smartmom import context  # noqa: E402
 context._ctx.set({'actor': admin, 'source': 'ui'})          # 像一个界面请求：自动审计开着
 
 # ───────────────────────── B 导入框架 ─────────────────────────
@@ -311,7 +311,7 @@ ok('BOM 单位换不到子件基本单位报错', not r['ok'])
 
 # AI 对列（演示回放 / 兜底规则）
 jx = imp.create_job('material', 'ai.csv', '料品编号,物品名称,计量单位,类别\nAI-1,甲,件,成品\n'.encode('utf-8'), admin)
-from honeymom.services import ai_switch  # noqa: E402
+from smartmom.services import ai_switch  # noqa: E402
 ai_switch.save({'global': True, 'demo': True, 'features': {'impl': True}})
 am = imp.ai_map(jx['id'], admin)
 ai_switch.save({'global': False, 'demo': False, 'features': {'impl': False}})
@@ -343,7 +343,7 @@ for code in ('foundry', 'machining', 'injection', 'assembly'):
             own = {'injection': 'injection', 'assembly': 'press'}[code]
             other = {'injection': 'press', 'assembly': 'injection'}[code]
             ok(f'{code}：设备类型只有通用 + 本行业的（没有 {other}、没有中频炉）', own in res['etype'] and other not in res['etype'] and 'furnace' not in res['etype'])
-from honeymom.schema import BY_NAME  # noqa: E402,F811
+from smartmom.schema import BY_NAME  # noqa: E402,F811
 with db.engine.connect() as c:
   if PG:
     ok('同一个库上叠加四个行业：注塑 + 装配的数据都在、铸造机加不受影响',
@@ -388,7 +388,7 @@ g = crud.get_('material', crud.list_('material', req('q=CF-IMP'), user=admin)['i
 ok('导入（模板列里有自定义字段）', r['ok'] and g['x_color'] == '本色' and any(c_.key == 'x_color' for c_ in imp.get('material').cols()))
 r = imp.run('material', [{'code': 'CF-IMP', 'x_color': '紫'}], user=admin)
 ok('导入校验自定义字段的选项', not r['ok'])
-from honeymom.services import ai as ai_mod  # noqa: E402
+from smartmom.services import ai as ai_mod  # noqa: E402
 ok('问数：表说明里写了自定义字段怎么取', "json_extract(material.ext,'$.x_color')" in ai_mod.schema_text())
 q = ai_mod.run_sql("SELECT code, json_extract(ext, '$.x_color') AS c FROM material WHERE json_extract(ext, '$.x_color') = '黑'", user=admin)
 ok('问数 SQL 能取自定义字段', q['rows'] == [['CF-1', '黑']], q)
@@ -435,7 +435,7 @@ r = crud.do_action('work_order', w_big, 'release', {}, user=planner)
 ok('满足条件（1500 件）：提交审批、不执行', r.get('pending_approval') and crud.get_('work_order', w_big, user=admin)['item']['status'] == 'draft', r.get('msg'))
 ok('步骤条件：优先级 5 不需要厂长那一步（2 步）', r['pending_approval']['steps'] == 2, r['pending_approval'])
 inst = r['pending_approval']['inst']
-from honeymom.agent import api as agent_api  # noqa: E402
+from smartmom.agent import api as agent_api  # noqa: E402
 lst = agent_api.approvals(status='pending', user=planner)
 a1 = next(a for a in lst if a['kind'] == 'flow')
 ok('审批中心（AI 关着也能看）：计划员看到、能批', a1['can_decide'] and a1['flow']['step'] == 1)
@@ -483,11 +483,11 @@ r = reports.run('material', {'group': [{'field': 'x_color'}], 'measures': [{'agg
 ok('按自定义字段分组', sorted(x[0] for x in r['rows']) == ['本色', '红', '黑'], r['rows'])
 r = reports.run('work_order', {'fields': ['code', 'qty', 'status'], 'filters': [{'field': 'qty', 'op': '>=', 'value': 1500}]}, admin)
 ok('明细 + 筛选', r['rows'] and all(x[1] >= 1500 for x in r['rows']) and r['columns'][2]['label'] == '状态')
-from honeymom.schema import role_t  # noqa: E402
+from smartmom.schema import role_t  # noqa: E402
 with db.engine.begin() as c:
     c.execute(role_t.insert().values(code='rp_test', name='报表测试', perms=['page.*', 'master.*.read', 'equipment.equipment.read', 'config.report.design'], builtin=False))
     db.insert(c, 'sys_user', {'username': 'rpu', 'name': '报表测试', 'roles': 'rp_test', 'active': True, 'password_hash': 'x'}, raw=True)
-from honeymom import perms  # noqa: E402
+from smartmom import perms  # noqa: E402
 perms.invalidate()
 rpu = auth.user_by_name('rpu')
 ok2, why = raises(lambda: reports.run('work_order', {'fields': ['code']}, rpu), 403)

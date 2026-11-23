@@ -3,7 +3,7 @@
 #   docker compose -f docker-compose.yml -f docker/compose.production.yml up -d
 #
 # - MOM_DEMO=0: no demo accounts, no demo data. The first start asks for the administrator account in the browser
-#   (or: docker compose exec mom python -m honeymom create-admin --username admin).
+#   (or: docker compose exec mom python -m smartmom create-admin --username admin).
 # - POSTGRES_PASSWORD must be set (in .env next to docker-compose.yml, see docker/env.example).
 # - The replayer does not start. To try the onboarding flow against it, add --profile replayer.
 #
@@ -14,7 +14,7 @@ services:
   mom:
     environment:
       MOM_DEMO: "0"
-      MOM_DB: postgresql+psycopg://${POSTGRES_USER:-honeymom}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@db:5432/${POSTGRES_DB:-honeymom}
+      MOM_DB: postgresql+psycopg://${POSTGRES_USER:-smartmom}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@db:5432/${POSTGRES_DB:-smartmom}
 
   db:
     environment:

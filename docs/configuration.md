@@ -1,15 +1,15 @@
 # Configuration
 
-HoneyMOM is configured in three places:
+SmartMOM is configured in three places:
 
 1. **Environment variables**, read at start-up (this page).
-2. **Command-line options** of `python -m honeymom`.
+2. **Command-line options** of `python -m smartmom`.
 3. **Settings in the UI** (System menu), stored in the database: company, shifts, roles, AI switches, backup
    schedule, MCP limits and so on.
 
 ## Environment variables
 
-Many variables were renamed for HoneyMOM. The old names (column "Old name") still work, so existing installations and
+Many variables were renamed for SmartMOM. The old names (column "Old name") still work, so existing installations and
 scripts need no change; when both are set, the new name wins. Empty values count as unset.
 
 ### Mode and language
@@ -20,7 +20,7 @@ scripts need no change; when both are set, the new name wins. Empty values count
 | `MOM_DEMO_LANG` | – | `en` | Language of the demo dataset: `en` (fictional plant "Northfield Castings") or `zh`. Only used when the database is first seeded. |
 | `MOM_LANG` | – | demo language in demo mode, else `en` | Server default language (`en` or `zh-CN`) for requests that do not send one and for texts created in the background (notifications, AI watch, reports). The web UI sends `X-Lang` (or `?lang=`). |
 | `MOM_BLANK` | `MES_BLANK` | off | `1` forces a blank install even with `MOM_DEMO=1`. |
-| `MOM_ADMIN_PASSWORD` | – | – | Password used by `python -m honeymom create-admin` instead of prompting. |
+| `MOM_ADMIN_PASSWORD` | – | – | Password used by `python -m smartmom create-admin` instead of prompting. |
 
 ### Database and data directory
 
@@ -47,8 +47,8 @@ scripts need no change; when both are set, the new name wins. Empty values count
 | `MOM_LLM_BASE_URL` | `MES_LLM_BASE_URL` | – | OpenAI-compatible endpoint, e.g. `https://api.example.com/v1`. |
 | `MOM_LLM_MODEL` | `MES_LLM_MODEL` | – | Model name. |
 | `MOM_LLM_API_KEY` | `MES_LLM_API_KEY` | – | API key for the endpoint. |
-| `MOM_AI_FIXTURES` | `HM_AI_FIXTURES` | `honeymom/fixtures/ai_demo` | Directory of recorded answers for AI demo mode. |
-| `HONEYMOM_API_KEY` | `HONEYMES_API_KEY` | – | API key for `python -m honeymom mcp` (stdio MCP) when `--key` is not given. |
+| `MOM_AI_FIXTURES` | `HM_AI_FIXTURES` | `smartmom/fixtures/ai_demo` | Directory of recorded answers for AI demo mode. |
+| `MOM_API_KEY` | `HONEYMOM_API_KEY`, `HONEYMES_API_KEY` | – | API key for `python -m smartmom mcp` (stdio MCP) when `--key` is not given. |
 
 There are no built-in model defaults. AI calls a model only when base URL, model and key are all set (here or in
 `config/llm.local.json`; the variables win). See [ai.md](ai.md).
@@ -57,31 +57,31 @@ There are no built-in model defaults. AI calls a model only when base URL, model
 
 | Variable | Old name | Default | Meaning |
 |---|---|---|---|
-| `MOM_PACKS` | `HM_PACKS` | `honeymom/packs` | Directory of industry templates. |
+| `MOM_PACKS` | `HM_PACKS` | `smartmom/packs` | Directory of industry templates. |
 | `MOM_PDF_BROWSER` | `HM_PDF_BROWSER` | auto-detect | Chrome, Chromium or Edge executable used in headless mode to print the AI daily report as PDF. Searched on `PATH` and in the usual Windows locations. Other PDFs (labels, report designer, commissioning report) are generated without a browser. The Docker image contains no browser, so the daily-report PDF export is not available there unless you add one. |
 | `ERP_LOOP` | – | `1` | `0` turns off the background loop of the external ERP integration (webhook delivery and retries, staging-database exchange). |
 | `ERP_WEBHOOK_TIMEOUT` | – | `10` | Seconds to wait for an external ERP webhook. |
-| `ERP_STAGING_URL` | – | – | SQLAlchemy URL of a separate staging database for the external ERP integration. Takes precedence over the system parameter `erp_staging_url`; when neither is set, the staging tables `erp_stg_in` / `erp_stg_out` in the HoneyMOM database are used. |
-| `TZ` | – | system | Time zone (Docker). Business times are local times; set the same time zone for HoneyMOM and the replayer. |
+| `ERP_STAGING_URL` | – | – | SQLAlchemy URL of a separate staging database for the external ERP integration. Takes precedence over the system parameter `erp_staging_url`; when neither is set, the staging tables `erp_stg_in` / `erp_stg_out` in the SmartMOM database are used. |
+| `TZ` | – | system | Time zone (Docker). Business times are local times; set the same time zone for SmartMOM and the replayer. |
 
 Variables such as `MES_URL`, `VF_*`, `REPLAYER_*`, `FC_PG` and `E2E_*` are used by the tests only.
 
 ## Command line
 
 ```
-python -m honeymom serve [--http 8900] [--host 0.0.0.0] [--db URL]
+python -m smartmom serve [--http 8900] [--host 0.0.0.0] [--db URL]
                                           start the server; creates and migrates the database on first start
-python -m honeymom create-admin [--username admin] [--name NAME]
+python -m smartmom create-admin [--username admin] [--name NAME]
                                           production install: create the first administrator
-python -m honeymom seed                   complete the base data (idempotent); prints the demo accounts in demo mode
-python -m honeymom db status              applied and pending migrations
-python -m honeymom db upgrade [--dry-run] run pending migrations; --dry-run lists the planned actions
-python -m honeymom db check               compare the database with the schema; exit code 1 on drift
-python -m honeymom backup [--note TEXT]   back up the database and uploaded files now
-python -m honeymom restore BACKUP.zip --to NEW_DATA_DIR [--to-db URL]
+python -m smartmom seed                   complete the base data (idempotent); prints the demo accounts in demo mode
+python -m smartmom db status              applied and pending migrations
+python -m smartmom db upgrade [--dry-run] run pending migrations; --dry-run lists the planned actions
+python -m smartmom db check               compare the database with the schema; exit code 1 on drift
+python -m smartmom backup [--note TEXT]   back up the database and uploaded files now
+python -m smartmom restore BACKUP.zip --to NEW_DATA_DIR [--to-db URL]
                                           restore into a new data directory (and a new PostgreSQL database)
-python -m honeymom audit verify           verify the audit log hash chain
-python -m honeymom mcp [--key KEY] [--user USER]
+python -m smartmom audit verify           verify the audit log hash chain
+python -m smartmom mcp [--key KEY] [--user USER]
                                           MCP server over stdio
 ```
 

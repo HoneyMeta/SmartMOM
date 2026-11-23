@@ -1,4 +1,4 @@
-# HoneyMOM plant data replayer - SPDX-License-Identifier: AGPL-3.0-or-later
+# SmartMOM plant data replayer - SPDX-License-Identifier: AGPL-3.0-or-later
 """Raw capture (replayer.record) -> compact recording (replayer.fmt) + manifest.
 
 - the event clock is the source's own (simulated) clock: wall-clock arrival is mapped through the <plant>/Plant/SimTime

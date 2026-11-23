@@ -1,4 +1,4 @@
-/* HoneyMOM base styles: global baseline, utility classes (hm-*), new look for legacy page classes (.page/.card/.kpi…), Element Plus tweaks, motion. */
+/* SmartMOM base styles: global baseline, utility classes (hm-*), new look for legacy page classes (.page/.card/.kpi…), Element Plus tweaks, motion. */
 
 * { box-sizing: border-box; }
 html, body, #app { margin: 0; height: 100%; }

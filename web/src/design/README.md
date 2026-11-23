@@ -1,4 +1,4 @@
-# 蜂元智能 MOM 设计系统（浅色 · 科技）
+# 智能 MOM 设计系统（浅色 · 科技）
 
 精确、现代的工业系统，不花哨。白和极浅灰的表面，半透明"玻璃"面板，钴蓝主色 + 青色数据色，蜂元琥珀色只做点缀；AI 相关的东西统一用"青 → 蓝 → 紫"细渐变标识。
 
@@ -63,7 +63,7 @@
   ```
 
 工作台 / 车间大屏专用组件在 `web/src/components/home/`（不全局注册）：`FactoryMap`（虚拟工厂平面布局 + 实时状态，悬停卡片、点击打开设备、Ctrl+点击/右键走 AI，没有布局时退回状态网格）、
-`FeedList`（提醒与 AI 值守信息流，接口与 provider 见 `honeymom/services/home_feed.py`）、`OrderTimeline`（工单迷你甘特）、`AndonStrip`（安灯条）、`usePoll`（轮询，页面隐藏时暂停）。都有 `big` 属性给大屏用。
+`FeedList`（提醒与 AI 值守信息流，接口与 provider 见 `smartmom/services/home_feed.py`）、`OrderTimeline`（工单迷你甘特）、`AndonStrip`（安灯条）、`usePoll`（轮询，页面隐藏时暂停）。都有 `big` 属性给大屏用。
 
 AI 结果组件在 `web/src/ai/`：`AiBlocks`（AI 回答里的图表 / 表格 / 指标卡 / 来源块，可"钉到工作台"）、`PinnedBlocks`（钉住的块；工作台的"钉住的 AI 结果"组件，只在有钉住的块且 AI 打开时出现）、
 `WatchFeed`（AI 值守发现卡片，工作台信息流里 kind=ai 的条目也用它渲染）、`DraftCard`（动作草稿：通过才执行）。

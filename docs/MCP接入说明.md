@@ -1,4 +1,4 @@
-# 蜂元智能 MOM（HoneyMOM）· MCP 接入说明
+# 智能 MOM（SmartMOM）· MCP 接入说明
 
 MCP（Model Context Protocol）让你们自己的 AI 工具（Claude Desktop、Cursor、Dify 等）直接查询 MES 和设备数据。这个接口默认只读，规则如下：
 
@@ -20,16 +20,16 @@ MCP（Model Context Protocol）让你们自己的 AI 工具（Claude Desktop、C
 | 方式 | 地址 / 命令 | 鉴权 |
 |---|---|---|
 | Streamable HTTP（远程） | `POST http://<服务器>:8900/mcp` | 请求头 `X-API-Key: hmk_…` 或 `Authorization: Bearer hmk_…` |
-| stdio（服务器本机） | `python -m honeymom mcp --key hmk_…`（或环境变量 `HONEYMOM_API_KEY`，旧名 `HONEYMES_API_KEY` 仍可用） | 同一个密钥 |
+| stdio（服务器本机） | `python -m smartmom mcp --key hmk_…`（或环境变量 `MOM_API_KEY`，旧名 `HONEYMOM_API_KEY`、`HONEYMES_API_KEY` 仍可用） | 同一个密钥 |
 
 协议版本支持 2025-11-25、2025-06-18、2025-03-26、2024-11-05（握手时协商）。服务器只返回 `application/json`，`GET /mcp` 返回 405（不开服务端推送流）。
 
 ### Claude Desktop（`claude_desktop_config.json`）
 
 ```json
-{ "mcpServers": { "honeymom": {
-  "command": "python", "args": ["-m", "honeymom", "mcp"], "cwd": "D:\\HoneyMOM",
-  "env": { "HONEYMOM_API_KEY": "hmk_…", "MOM_DATA": "D:\\HoneyMOM\\data" } } } }
+{ "mcpServers": { "smartmom": {
+  "command": "python", "args": ["-m", "smartmom", "mcp"], "cwd": "D:\\SmartMOM",
+  "env": { "MOM_API_KEY": "hmk_…", "MOM_DATA": "D:\\SmartMOM\\data" } } } }
 ```
 
 用 PostgreSQL 时在 `env` 里再加 `MOM_DB`（旧名 `MES_DB` 仍可用）。远程连接用 Claude 的"自定义连接器"，填上面的 HTTP 地址和请求头。
@@ -37,7 +37,7 @@ MCP（Model Context Protocol）让你们自己的 AI 工具（Claude Desktop、C
 ### Cursor（`.cursor/mcp.json`）
 
 ```json
-{ "mcpServers": { "honeymom": { "url": "http://服务器:8900/mcp", "headers": { "X-API-Key": "hmk_…" } } } }
+{ "mcpServers": { "smartmom": { "url": "http://服务器:8900/mcp", "headers": { "X-API-Key": "hmk_…" } } } }
 ```
 
 ### Dify

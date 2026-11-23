@@ -45,7 +45,7 @@ def _code_worker(args):
     url, data, n, threads = args
     os.environ['HM_DATA'] = data
     sys.path.insert(0, ROOT)
-    from honeymom import db
+    from smartmom import db
     db.init(url, migrate_db=False)
     out, errs = [], []
 
@@ -104,7 +104,7 @@ def main():
     print(f'数据库：{a.db}  目录：{work}', flush=True)
     t_all = time.time()
 
-    from honeymom import db, migrations, schema
+    from smartmom import db, migrations, schema
     # ───────── A 迁移 ─────────
     section('A 迁移')
     db.init(url, migrate_db=False)
@@ -145,14 +145,14 @@ def main():
             nroles = c.execute(sa.text('SELECT count(*) FROM sys_role')).scalar()
         check('线上库副本：业务数据行数不变', before == after, json.dumps({k: v for k, v in after.items()}, ensure_ascii=False))
         check('线上库副本：写入了默认角色', nroles == 9)
-        from honeymom import audit
+        from smartmom import audit
         n = audit.seal(leng)
         v = audit.verify(leng)
         check('线上库副本：旧审计记录接上哈希链并核对通过', v['ok'] and v['checked'] >= before['audit_log'], f'封存 {n} 条')
         leng.dispose()
 
     # 基础数据 + 测试用组织结构
-    from honeymom import seed
+    from smartmom import seed
     seed.run()
     with db.engine.begin() as c:
         c.execute(schema.TABLES['datasource'].update().values(enabled=False))      # 测试不连真实数据源
@@ -170,10 +170,10 @@ def main():
 
     # ───────── 起服务 ─────────
     import uvicorn
-    from honeymom import apikeys, audit, auth, backup, context, perms, ts
-    from honeymom.app import build_app
-    from honeymom.collector import COLLECTOR
-    from honeymom.ingest import GATE, ING
+    from smartmom import apikeys, audit, auth, backup, context, perms, ts
+    from smartmom.app import build_app
+    from smartmom.collector import COLLECTOR
+    from smartmom.ingest import GATE, ING
     s = socket.socket()
     s.bind(('127.0.0.1', 0))
     port = s.getsockname()[1]
@@ -231,7 +231,7 @@ def main():
               'operator': ['page.*', '*.read', 'production.*', 'equipment.*'], 'qc': ['page.*', '*.read', 'quality.*'], 'maint': ['page.*', '*.read', 'equipment.*'],
               'warehouse': ['page.*', '*.read', 'warehouse.*'], 'engineer': ['page.*', '*.read', 'master.*', 'machining.*', 'foundry.*', 'quality.*', 'ai.*']}
     EXTRA = {r: [p for p in perms.DEFAULT_ROLES[r][1] if p not in BASE47.get(r, []) and not p.startswith('!')] for r in WRITE47 if r in perms.DEFAULT_ROLES}
-    from honeymom.migrations.baseline_47 import BASELINE_47      # 只核对 4.7 已有的实体（5.0 新实体的权限由各模块自己的检查管）
+    from smartmom.migrations.baseline_47 import BASELINE_47      # 只核对 4.7 已有的实体（5.0 新实体的权限由各模块自己的检查管）
     for role, mods in WRITE47.items():
         u = {'role_list': [role]}
         for e in schema.ENTITIES:
@@ -275,7 +275,7 @@ def main():
     check('有修改权限 → 改不合格品 200', http('PUT', f'/api/e/ncr/{ncr1}', {'root_cause': '测试原因'}, tk)[0] == 200)
     check('页面接口按页面权限：工作台可看', http('GET', '/api/home/cockpit', token=tk)[0] == 200)
     check('页面接口按页面权限：没有 SPC 页面 → 403', http('GET', '/api/quality/spc', token=tk)[0] == 403)
-    from honeymom.services import ai as ai_svc
+    from smartmom.services import ai as ai_svc
     u = auth.user_by_name('fc_l1')
     res = ai_svc.run_sql('SELECT id, line FROM equipment', user=u)
     check('问数 SQL 按提问人的数据范围（同名 CTE 替换）', {row[0] for row in res['rows']} == ids, f"{len(res['rows'])} 行")
@@ -506,7 +506,7 @@ def main():
     dup0 = ING.stats['duplicates']
     in_loop(lambda: [GATE.submit('part', ['FCSF', m]) for m in msgs])
     check('同样的消息再来一遍（重放 / MQTT 重发）被去重', n_pe('FCSF') == 200 and ING.stats['duplicates'] - dup0 == 200)
-    from honeymom.spool import Spool
+    from smartmom.spool import Spool
     sp = Spool(os.path.join(work, 'spool_unit'))
     for i in range(50):
         sp.append('x', [i])
@@ -625,12 +625,12 @@ def main():
         except Exception as ex:
             fails.append(f'{sql[:60]} → {str(ex).splitlines()[0][:100]}')
     check(f'问数 SQL 语料 {len(corpus)} 条全部能执行（{db.engine.dialect.name}）', not fails, ' | '.join(fails[:3]))
-    from honeymom.services.ai import dialect_hint
+    from smartmom.services.ai import dialect_hint
     check('问数提示带方言说明和可移植写法', ('PostgreSQL' if a.db != 'sqlite' else 'SQLite') in dialect_hint() and 'hm_hour' in dialect_hint())
 
     # ───────── J 计划达成率 ─────────
     section('J 计划达成率')
-    from honeymom.services.home import attainment
+    from smartmom.services.home import attainment
     x0, x1, x2, x3 = attainment(50, 0, 0), attainment(1200, 100, 200), attainment(120, 100, 200), attainment(180, 100, 200)
     check('没有计划：不给百分比，说明原因', x0['attain'] is None and x0['plan_state'] == 'none' and x0['plan_note'])
     check('计划远小于实际（1200%）：不给百分比，给计划 / 实际件数', x1['attain'] is None and x1['plan_state'] == 'tiny' and '100' in x1['plan_note'] and '1200' in x1['plan_note'])

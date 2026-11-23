@@ -21,7 +21,7 @@
     <HmSkeleton v-if="!r" variant="kpi" />
     <article v-else class="mag" data-test="daily-report">
       <header class="mast">
-        <div class="brand"><span class="logo" aria-hidden="true" />{{ $t('common.honeymom') }} <i>·</i> {{ $t('common.productionDailyReport') }}</div>
+        <div class="brand"><span class="logo" aria-hidden="true" />{{ $t('common.smartmom') }} <i>·</i> {{ $t('common.productionDailyReport') }}</div>
         <div class="dt"><b class="hm-num">{{ r.day.slice(5).replace('-', ' / ') }}</b><span>{{ r.day.slice(0, 4) }} · {{ weekday }}</span></div>
         <div class="by"><span class="tag" :class="r.by" data-test="daily-by">{{ BY[r.by] || r.by }}</span>
           <span class="muted">{{ r.generated_at ? $t('daily.generatedAt') + r.generated_at.slice(5, 16) : $t('daily.livePreviewNotSaved') }}</span></div>
@@ -79,7 +79,7 @@
           </ol>
         </div>
       </section>
-      <footer class="foot">{{ $t('daily.dataFromHoneymomDataClock', [r.by === 'rule' ? $t('daily.highlightsRisksRecommendationsAreRul') : $t('daily.numbersInTheAiInsight'), r.facts.wo_open, r.facts.ncr_open]) }}</footer>
+      <footer class="foot">{{ $t('daily.dataFromSmartmomDataClock', [r.by === 'rule' ? $t('daily.highlightsRisksRecommendationsAreRul') : $t('daily.numbersInTheAiInsight'), r.facts.wo_open, r.facts.ncr_open]) }}</footer>
     </article>
   </div>
 </template>

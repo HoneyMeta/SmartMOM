@@ -1,4 +1,4 @@
-# Contributing to HoneyMOM
+# Contributing to SmartMOM
 
 Thank you for helping. This page explains how to set up a development environment, which checks to run and how
 pull requests are handled.
@@ -13,7 +13,7 @@ pull requests are handled.
 
 ## Contributor License Agreement
 
-HoneyMOM is dual-licensed (AGPL-3.0-or-later and commercial, see [COMMERCIAL-LICENSE.md](COMMERCIAL-LICENSE.md)).
+SmartMOM is dual-licensed (AGPL-3.0-or-later and commercial, see [COMMERCIAL-LICENSE.md](COMMERCIAL-LICENSE.md)).
 Before we can merge your first pull request you sign the [Individual CLA](CLA.md) once. The CLA bot posts a comment on
 your pull request; reply with the sentence it shows. You keep the copyright in your contribution; the CLA allows
 HoneyMeta to distribute it under the AGPL and under commercial terms.
@@ -23,14 +23,14 @@ HoneyMeta to distribute it under the AGPL and under commercial terms.
 Requirements: Python 3.12, Node.js 20 or later, Git. PostgreSQL 16 or 17 is optional (SQLite is the default).
 
 ```bash
-git clone https://github.com/HoneyMeta/HoneyMOM.git
-cd HoneyMOM
+git clone https://github.com/HoneyMeta/SmartMOM.git
+cd SmartMOM
 python -m venv .venv && source .venv/bin/activate        # Windows: .venv\Scripts\activate
 pip install -r requirements.txt -r replayer/requirements.txt
 cd web && npm ci && npm run build && cd ..
 
 python -m replayer                       # terminal 1: plant data on MQTT :1883, OPC UA :4840, Modbus :5020
-MOM_DEMO=1 python -m honeymom serve      # terminal 2: http://localhost:8900, admin / honey123
+MOM_DEMO=1 python -m smartmom serve      # terminal 2: http://localhost:8900, admin / honey123
 cd web && npm run dev                    # optional, terminal 3: Vite dev server on :5190 with hot reload
 ```
 
@@ -40,13 +40,13 @@ cd web && npm run dev                    # optional, terminal 3: Vite dev server
 
 | Path | Content |
 |---|---|
-| `honeymom/schema.py`, `schema_*.py` | Entity definitions: one definition gives the table, the generic API `/api/e/<entity>` and the list/form pages |
-| `honeymom/migrations/` | Versioned migrations `vNNNN_*.py`, applied at start-up |
-| `honeymom/services/` | Production, quality, equipment, warehouse, foundry, machining, AI and other services |
-| `honeymom/erp/`, `honeymom/factory/`, `honeymom/impl/`, `honeymom/agent/` | Built-in ERP, factory model and onboarding, configuration tools, agent engine |
-| `honeymom/collector.py`, `ingest.py`, `ts.py` | Protocol connectors, tag-to-record mapping, time series |
-| `honeymom/locale/` | Backend translations (`en.json`) and English demo data (`data-en.json`) |
-| `honeymom/packs/` | Industry templates (data, not code) |
+| `smartmom/schema.py`, `schema_*.py` | Entity definitions: one definition gives the table, the generic API `/api/e/<entity>` and the list/form pages |
+| `smartmom/migrations/` | Versioned migrations `vNNNN_*.py`, applied at start-up |
+| `smartmom/services/` | Production, quality, equipment, warehouse, foundry, machining, AI and other services |
+| `smartmom/erp/`, `smartmom/factory/`, `smartmom/impl/`, `smartmom/agent/` | Built-in ERP, factory model and onboarding, configuration tools, agent engine |
+| `smartmom/collector.py`, `ingest.py`, `ts.py` | Protocol connectors, tag-to-record mapping, time series |
+| `smartmom/locale/` | Backend translations (`en.json`) and English demo data (`data-en.json`) |
+| `smartmom/packs/` | Industry templates (data, not code) |
 | `web/src/` | Vue 3 front end; translations in `web/src/locales/` |
 | `replayer/` | Plant data replayer |
 | `tests/` | Checks (`*_check.py`), API tests, browser walk-throughs (`*_ui.js`) |
@@ -54,20 +54,20 @@ cd web && npm run dev                    # optional, terminal 3: Vite dev server
 
 ## Rules that the checks enforce
 
-- **Schema changes need a migration.** If you change `schema*.py`, add `honeymom/migrations/vNNNN_<name>.py`. At
+- **Schema changes need a migration.** If you change `schema*.py`, add `smartmom/migrations/vNNNN_<name>.py`. At
   start-up the server compares the database with the schema and refuses to start on drift.
-  `python -m honeymom db upgrade --dry-run` shows what will run, `python -m honeymom db check` reports drift. See
+  `python -m smartmom db upgrade --dry-run` shows what will run, `python -m smartmom db check` reports drift. See
   `docs/dev/foundation.md` for the migration API.
 - **Both databases.** Code runs on SQLite and PostgreSQL. Use SQLAlchemy Core expressions; when you need dialect SQL,
   test both.
 - **Translations.** Backend message ids are the original Chinese texts wrapped in `_tr(...)`, with English in
-  `honeymom/locale/en.json`; demo and seed data go to `honeymom/locale/data-en.json`. The front end has no CJK
+  `smartmom/locale/en.json`; demo and seed data go to `smartmom/locale/data-en.json`. The front end has no CJK
   characters in `web/src` outside `web/src/locales/zh-CN.json`; `en.json` and `zh-CN.json` must have the same keys.
   Run `python tests/i18n_check.py` and `python tests/i18n_web_check.py`.
 - **Write operations go through the business layer.** Use `db.insert / db.update / db.delete` (they write the audit
-  log) and the existing services in `honeymom/services/ops.py` for actions that AI or agents can trigger; AI-triggered
+  log) and the existing services in `smartmom/services/ops.py` for actions that AI or agents can trigger; AI-triggered
   writes always need a confirmation or approval step.
-- **Permissions.** New endpoints check permission points and data scopes like the existing ones (`honeymom/perms.py`).
+- **Permissions.** New endpoints check permission points and data scopes like the existing ones (`smartmom/perms.py`).
 - **No secrets or personal data.** No API keys, passwords, tokens, real customer or person names in code, fixtures,
   recordings or screenshots. Demo data uses fictional names.
 
@@ -82,10 +82,10 @@ python tests/code_check.py
 python tests/foundation_check.py          # --db pg / --db pgplain with FC_PG=postgresql+psycopg://user:pw@host:port
 python tests/impl_check.py
 python tests/erp_check.py                 # --db pg with FC_PG
-MOM_DEMO=1 python -m honeymom seed && python tests/agents_check.py
+MOM_DEMO=1 python -m smartmom seed && python tests/agents_check.py
 ```
 
-End to end against the replayer (start `python -m replayer` and `MOM_DEMO=1 python -m honeymom serve` first):
+End to end against the replayer (start `python -m replayer` and `MOM_DEMO=1 python -m smartmom serve` first):
 
 ```bash
 MES_URL=http://127.0.0.1:8900 REPLAYER_MQTT=mqtt://127.0.0.1:1883 \
@@ -109,8 +109,8 @@ cover the pages you changed. The web build must pass: `cd web && npm run build`.
 
 ## Translations, templates and recordings
 
-- Translations: add or correct entries in `honeymom/locale/*.json` and `web/src/locales/*.json`.
-- Device and industry templates are data (`honeymom/packs/<code>/pack.json`, device templates in the factory model);
+- Translations: add or correct entries in `smartmom/locale/*.json` and `web/src/locales/*.json`.
+- Device and industry templates are data (`smartmom/packs/<code>/pack.json`, device templates in the factory model);
   see `docs/dev/config.md` and `docs/dev/factory-model.md`.
 - Replayer recordings: follow [replayer/README.md](replayer/README.md) and make sure a recording contains no real
   company, person or site names before you submit it.

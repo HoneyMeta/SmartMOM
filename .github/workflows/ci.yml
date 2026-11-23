@@ -1,4 +1,4 @@
-# CI: Python checks that need no browser (SQLite and PostgreSQL), an end-to-end run of HoneyMOM against the
+# CI: Python checks that need no browser (SQLite and PostgreSQL), an end-to-end run of SmartMOM against the
 # data replayer, and the web build. Browser walk-throughs (node tests/*_ui.js, Playwright) are not run here.
 #
 # Language: foundation / impl / erp / exec checks assert Chinese messages and the Chinese demo dataset, so they run with
@@ -54,6 +54,9 @@ jobs:
           python tests/i18n_check.py
           python tests/i18n_web_check.py
 
+      - name: Rename compatibility (deprecated honeymom alias, old env var names)
+        run: python tests/compat_check.py
+
       - name: Document numbering
         run: python tests/code_check.py
 
@@ -106,7 +109,7 @@ jobs:
         run: python tests/erp_check.py --db pg
 
   replayer-e2e:
-    name: End to end (HoneyMOM + replayer)
+    name: End to end (SmartMOM + replayer)
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
@@ -126,12 +129,12 @@ jobs:
             replayer/requirements.txt
       - name: Install dependencies
         run: pip install -r requirements.txt -r replayer/requirements.txt
-      - name: Start the replayer, HoneyMOM demo in English (:8900) and in Chinese (:8901)
+      - name: Start the replayer, SmartMOM demo in English (:8900) and in Chinese (:8901)
         run: |
           mkdir -p "$LOGS"
           nohup python -m replayer --speed 10 > "$LOGS/replayer.log" 2>&1 &
-          MOM_DATA="$RUNNER_TEMP/mom-en" MOM_DEMO_LANG=en nohup python -m honeymom serve --http 8900 > "$LOGS/mom-en.log" 2>&1 &
-          MOM_DATA="$RUNNER_TEMP/mom-zh" MOM_DEMO_LANG=zh nohup python -m honeymom serve --http 8901 > "$LOGS/mom-zh.log" 2>&1 &
+          MOM_DATA="$RUNNER_TEMP/mom-en" MOM_DEMO_LANG=en nohup python -m smartmom serve --http 8900 > "$LOGS/mom-en.log" 2>&1 &
+          MOM_DATA="$RUNNER_TEMP/mom-zh" MOM_DEMO_LANG=zh nohup python -m smartmom serve --http 8901 > "$LOGS/mom-zh.log" 2>&1 &
           for port in 8900 8901; do
             for i in $(seq 1 180); do
               curl -fsS "http://127.0.0.1:$port/api/setup/admin" > /dev/null 2>&1 && break

@@ -1,0 +1,12 @@
+# Build SimFactory from a source checkout instead of pulling ghcr.io/honeymeta/simfactory (profile "factory").
+#
+#   git clone https://github.com/HoneyMeta/SimFactory.git ../SimFactory      # next to this repository
+#   docker compose -f docker-compose.yml -f docker/compose.factory-build.yml --profile factory up --build
+#
+# SIMFACTORY_SRC points at another checkout (relative to the directory of docker-compose.yml). Build arguments of the
+# SimFactory Dockerfile (NODE_IMAGE, PYTHON_IMAGE, NPM_REGISTRY, DEBIAN_MIRROR, PIP_MIRROR) can be added under args.
+services:
+  simfactory:
+    image: ${SIMFACTORY_IMAGE:-simfactory:local}
+    build:
+      context: ${SIMFACTORY_SRC:-../SimFactory}

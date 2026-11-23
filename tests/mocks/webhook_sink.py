@@ -1,4 +1,4 @@
-"""Webhook 接收端模拟（测试用）：核对蜂元智能 MOM 的签名（X-HM-Signature = "sha256=" + HMAC-SHA256(密钥, X-HM-Timestamp + "." + 请求体)），
+"""Webhook 接收端模拟（测试用）：核对智能 MOM 的签名（X-HM-Signature = "sha256=" + HMAC-SHA256(密钥, X-HM-Timestamp + "." + 请求体)），
 可以设置"前 N 次返回 500"来测重试。
   POST /hook/<名字>          接收；签名不对返回 401
   POST /mock/config {name, secret, fail_first}     GET /mock/received?name=     POST /mock/reset

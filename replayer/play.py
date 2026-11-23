@@ -1,4 +1,4 @@
-# HoneyMOM plant data replayer - SPDX-License-Identifier: AGPL-3.0-or-later
+# SmartMOM plant data replayer - SPDX-License-Identifier: AGPL-3.0-or-later
 """Replay loop: reads the recording, moves every timestamp to "now", publishes MQTT, updates OPC UA and Modbus."""
 import asyncio
 import json

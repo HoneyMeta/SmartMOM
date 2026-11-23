@@ -1,6 +1,6 @@
 # Plant data replayer
 
-Run HoneyMOM against realistic live shop-floor data without a simulator or a real plant.
+Run SmartMOM against realistic live shop-floor data without a simulator or a real plant.
 
 The replayer plays back a recorded day of a demo foundry (`foundry-housing`: melting, molding, shot blasting,
 six machining centres with action-level signals, deburring robot, inspection, AS/RS, AGVs) and serves it on the same
@@ -13,7 +13,7 @@ interfaces a plant would:
 | Modbus TCP | one unit per device, holding registers / coils exactly as recorded (input registers / discrete inputs mirror them) |
 
 Topics, node ids, payloads and register layout are those of the delivery package point table
-(`honeymom/fixtures/delivery/foundry-housing.zip`), so the MES onboarding (`接入中心`) works unchanged.
+(`smartmom/fixtures/delivery/foundry-housing.zip`), so the MES onboarding (`接入中心`) works unchanged.
 
 All timestamps are moved to "now": message `ts` / `sim_ts`, part-event times, OPC UA SourceTimestamps, and the production
 date inside serial numbers (`SH<yymmdd>nnnnn`) and heat numbers (`L<yymmdd>-nnn`). The recording loops; every loop gets
@@ -38,7 +38,7 @@ python -m replayer package --host 127.0.0.1 --out foundry-housing-replayer.zip
 ```
 
 The package (point table `points.xlsx`, layout `layout.dxf`, 3D models `models/*.glb`, `README.md`) is the one the MES
-ships in `honeymom/fixtures/delivery/`; only the endpoints in its 协议 sheet and README are rewritten.
+ships in `smartmom/fixtures/delivery/`; only the endpoints in its 协议 sheet and README are rewritten.
 
 ## Options
 
@@ -92,4 +92,4 @@ REPLAYER_MODBUS=127.0.0.1:5020 python tests/replayer_check.py 90
 
 ## License
 
-AGPL-3.0-or-later, like the rest of HoneyMOM.
+AGPL-3.0-or-later, like the rest of SmartMOM.

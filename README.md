@@ -1,11 +1,13 @@
-# HoneyMOM
+# SmartMOM
 
 **English** | [简体中文](README.zh-CN.md)
 
-[![CI](https://github.com/HoneyMeta/HoneyMOM/actions/workflows/ci.yml/badge.svg)](https://github.com/HoneyMeta/HoneyMOM/actions/workflows/ci.yml)
+> SmartMOM was formerly called HoneyMOM. Only the name changed, see [CHANGELOG.md](CHANGELOG.md).
+
+[![CI](https://github.com/HoneyMeta/SmartMOM/actions/workflows/ci.yml/badge.svg)](https://github.com/HoneyMeta/SmartMOM/actions/workflows/ci.yml)
 [![License: AGPL-3.0-or-later](https://img.shields.io/badge/license-AGPL--3.0--or--later-blue.svg)](LICENSE)
 
-HoneyMOM is an open-source manufacturing operations management (MOM/MES) system for discrete plants, built first
+SmartMOM is an open-source manufacturing operations management (MOM/MES) system for discrete plants, built first
 for foundries, machine shops and plants that do both. It covers the four ISA-95 Level 3 areas (production, quality,
 maintenance and inventory operations), adds a built-in ERP for sales, purchasing, MRP and costing, and collects machine
 data over MQTT, Sparkplug B, OPC UA, Modbus TCP, HTTP push and SQL staging tables. AI features (an assistant that
@@ -75,7 +77,7 @@ Grouped by the ISA-95 (IEC 62264) activity areas. The left-hand menu of the web 
   demand, rough-cut capacity; suggestions released as work orders or purchase orders.
 - Costing (moving average, actual work-order cost, standard cost roll-up, variances, period close), receivables and
   payables, accounting vouchers with configurable export formats.
-- External ERP mode: when another ERP is the system of record, HoneyMOM exchanges data through a REST API, signed
+- External ERP mode: when another ERP is the system of record, SmartMOM exchanges data through a REST API, signed
   webhooks with retries and a staging database.
 
 ### Equipment connectivity
@@ -129,8 +131,8 @@ Demo plant "Northfield Castings" fed by the replayer.
 Requires Docker with Compose v2.
 
 ```bash
-git clone https://github.com/HoneyMeta/HoneyMOM.git
-cd HoneyMOM
+git clone https://github.com/HoneyMeta/SmartMOM.git
+cd SmartMOM
 docker compose up
 ```
 
@@ -138,7 +140,32 @@ The first run builds the image (a few minutes). Then open http://localhost:8900 
 `honey123`. Other demo accounts: `manager`, `planner`, `leader`, `operator`, `qc`, `maint`, `wh`, `engineer` (same
 password). The cockpit, plant map and OEE fill within about a minute as the replayer sends data.
 
-`docker compose up` starts three containers: `mom` (HoneyMOM and the web UI), `db` (PostgreSQL 17) and `replayer`.
+`docker compose up` starts three containers: `mom` (SmartMOM and the web UI), `db` (PostgreSQL 17) and `replayer`.
+
+### Docker with the live plant simulator (SimFactory)
+
+The replayer plays back a recorded day of the demo plant. [SimFactory](https://github.com/HoneyMeta/SimFactory)
+simulates the same plant live: you can change the speed, inject faults or stop machines and watch SmartMOM react.
+To use it as the data source:
+
+```bash
+docker compose --profile factory up
+```
+
+This adds a `simfactory` container (image `ghcr.io/honeymeta/simfactory:latest`, demo mode) with its web UI on
+http://localhost:8800 (`admin` / `honey123`). The replayer then plays nothing and relays the demo ports (MQTT 1883,
+OPC UA 4840, Modbus TCP 5020, web 8800) to SimFactory, so SmartMOM's demo data sources need no change. Start without
+`--profile factory` to go back to the recording. Requires Docker Compose 2.20 or later.
+
+To build SimFactory from a checkout next to this one instead of pulling the image:
+
+```bash
+git clone https://github.com/HoneyMeta/SimFactory.git ../SimFactory
+docker compose -f docker-compose.yml -f docker/compose.factory-build.yml --profile factory up --build
+```
+
+Other plants, and SimFactory on another machine: see
+[docs/getting-started.md](docs/getting-started.md#with-the-live-plant-simulator-simfactory).
 
 For production (no demo data, the first start asks you to create the administrator):
 
@@ -162,12 +189,15 @@ cd web && npm ci && npm run build && cd ..
 # terminal 1: plant data
 python -m replayer
 
-# terminal 2: HoneyMOM in demo mode, SQLite database in data/mes.db
-MOM_DEMO=1 python -m honeymom serve  # Windows: set MOM_DEMO=1 && python -m honeymom serve
+# terminal 2: SmartMOM in demo mode, SQLite database in data/mes.db
+MOM_DEMO=1 python -m smartmom serve  # Windows: set MOM_DEMO=1 && python -m smartmom serve
 ```
 
+Instead of the replayer you can run [SimFactory](https://github.com/HoneyMeta/SimFactory) in demo mode on the same
+machine: it serves the same demo plant on the same ports (MQTT 1883, OPC UA 4840, Modbus TCP 5020).
+
 Open http://localhost:8900. Without `MOM_DEMO=1` you get a production install: no accounts and no demo data; create
-the administrator in the browser or with `python -m honeymom create-admin --username admin`.
+the administrator in the browser or with `python -m smartmom create-admin --username admin`.
 
 For front-end work, run `npm run dev` in `web/` (Vite on port 5190, `/api` is proxied to port 8900).
 
@@ -175,23 +205,23 @@ More in [docs/getting-started.md](docs/getting-started.md).
 
 ## Configuration
 
-HoneyMOM reads environment variables at start-up. The most used ones:
+SmartMOM reads environment variables at start-up. The most used ones:
 
 | Variable | Default | Meaning |
 |---|---|---|
 | `MOM_DEMO` | off | `1`: demo accounts (password `honey123`) and the demo plant. Off: production install. |
 | `MOM_DEMO_LANG` | `en` | Demo dataset language, `en` or `zh`. Used when the database is first seeded. |
 | `MOM_LANG` | demo language, else `en` | Default language for requests without a language and for background texts. |
-| `MOM_DB` | `sqlite:///<data dir>/mes.db` | Database URL, e.g. `postgresql+psycopg://user:password@host:5432/honeymom`. |
+| `MOM_DB` | `sqlite:///<data dir>/mes.db` | Database URL, e.g. `postgresql+psycopg://user:password@host:5432/smartmom`. |
 | `MOM_DATA` | `./data` | Data directory: SQLite database, uploaded files, backups. |
 | `MOM_BACKUP_DIR` | `<data dir>/backups` | Where backups are written. |
 | `MOM_LLM_BASE_URL`, `MOM_LLM_API_KEY`, `MOM_LLM_MODEL` | – | OpenAI-compatible model endpoint for the AI features. |
-| `MOM_ADMIN_PASSWORD` | – | Password for `python -m honeymom create-admin` without a prompt. |
+| `MOM_ADMIN_PASSWORD` | – | Password for `python -m smartmom create-admin` without a prompt. |
 
 Variables from earlier versions (`MES_DB`, `HM_DATA`, `MES_LLM_*`, other `MES_*` / `HM_*`) still work; the `MOM_*`
 name wins when both are set.
 
-`python -m honeymom serve` also takes `--http <port>` (default 8900), `--host` (default `0.0.0.0`) and `--db <url>`.
+`python -m smartmom serve` also takes `--http <port>` (default 8900), `--host` (default `0.0.0.0`) and `--db <url>`.
 The full list is in [docs/configuration.md](docs/configuration.md). Plant-specific settings (company, shifts,
 backup time, AI switches, MCP limits) are changed in the UI under **System**.
 
@@ -213,7 +243,7 @@ OpenAI-compatible endpoint.
    variables take precedence over the file; the old names `MES_LLM_*` still work.
 2. Log in as an administrator, open **System → AI features**, turn on the master switch and the features you want.
 
-HoneyMOM ships with no model endpoint, model name or key, and no keys are stored in the repository. AI stays off until
+SmartMOM ships with no model endpoint, model name or key, and no keys are stored in the repository. AI stays off until
 all three values are configured: until then the AI features use rule-based results, and demo mode replays recorded
 answers without calling a model. When a model is configured, prompts that contain
 plant data (query results, page context) are sent to that endpoint. Details: [docs/ai.md](docs/ai.md).
@@ -225,7 +255,7 @@ plant data (query results, page context) are sent to that endpoint. Details: [do
   mobile PWA, shop-floor display (Vue 3)          (MCP, /mcp)            (REST, webhooks, staging DB)
                  │ HTTP /api                            │                      │
  ┌───────────────┴──────────────────────────────────────┴──────────────────────┴───────┐
- │ HoneyMOM: one Python process (FastAPI)                                               │
+ │ SmartMOM: one Python process (FastAPI)                                               │
  │   production · quality · maintenance · inventory · built-in ERP · scheduling         │
  │   AI assistant, agents, watch · permissions · audit · backup · migrations            │
  │   collector (MQTT, Sparkplug B, OPC UA, Modbus TCP, HTTP push, SQL)                  │
@@ -235,13 +265,13 @@ plant data (query results, page context) are sent to that endpoint. Details: [do
       SQLite or PostgreSQL (+ TimescaleDB)          PLCs, gateways, brokers, or the replayer
 ```
 
-- `honeymom/schema*.py`: entity definitions. One definition creates the database table, the generic REST API
+- `smartmom/schema*.py`: entity definitions. One definition creates the database table, the generic REST API
   (`/api/e/<entity>`) and the list and form pages in the UI.
-- `honeymom/services/`, `honeymom/erp/`, `honeymom/factory/`, `honeymom/impl/`, `honeymom/agent/`: business
+- `smartmom/services/`, `smartmom/erp/`, `smartmom/factory/`, `smartmom/impl/`, `smartmom/agent/`: business
   services, built-in ERP, factory model and onboarding, configuration tools, agent engine.
-- `honeymom/collector.py`, `honeymom/ingest.py`, `honeymom/ts.py`: protocol connectors, mapping of tag values to
+- `smartmom/collector.py`, `smartmom/ingest.py`, `smartmom/ts.py`: protocol connectors, mapping of tag values to
   business records (machine states, alarms, energy, counters, tool life, part events), time series.
-- `honeymom/migrations/`: versioned migrations, run automatically at start-up.
+- `smartmom/migrations/`: versioned migrations, run automatically at start-up.
 - `web/`: Vue 3 single-page app, built into `web/dist` and served by the backend.
 - `replayer/`: plays back recordings over the same interfaces a plant offers; see [replayer/README.md](replayer/README.md).
 - `tests/`: API and in-process checks (`*_check.py`), browser walk-throughs (`*_ui.js`).
@@ -263,10 +293,10 @@ Possible next steps, not commitments; discussion and contributions are welcome i
 
 Copyright (C) 2026 蜂元科技（郑州）有限责任公司 (HoneyMeta Technology (Zhengzhou) Co., Ltd.)
 
-HoneyMOM is licensed under the **GNU Affero General Public License v3.0 or later** ([LICENSE](LICENSE)). If you run a
+SmartMOM is licensed under the **GNU Affero General Public License v3.0 or later** ([LICENSE](LICENSE)). If you run a
 modified version for users over a network, the AGPL requires you to offer them its source code.
 
-A **commercial license** is available for organisations that want to use HoneyMOM without the AGPL obligations, for
+A **commercial license** is available for organisations that want to use SmartMOM without the AGPL obligations, for
 example in a proprietary product or a hosted service, and it can include support with an SLA. See
 [COMMERCIAL-LICENSE.md](COMMERCIAL-LICENSE.md) or contact dev@honeymeta.com, https://www.honeymeta.com.
 
@@ -279,4 +309,4 @@ Bug reports, fixes, translations, device templates and industry templates are we
 request. Please follow the [code of conduct](CODE_OF_CONDUCT.md) and report security problems privately as described in
 [SECURITY.md](SECURITY.md).
 
-Main repository: https://github.com/HoneyMeta/HoneyMOM. Read-only mirrors on Gitee and GitCode.
+Main repository: https://github.com/HoneyMeta/SmartMOM. Read-only mirrors on Gitee and GitCode.

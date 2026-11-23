@@ -2,8 +2,8 @@
 import sys
 import time
 
-from honeymom import db
-from honeymom.services import ai
+from smartmom import db
+from smartmom.services import ai
 
 sys.stdout.reconfigure(encoding='utf-8')
 db.init()

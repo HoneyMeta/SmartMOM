@@ -1,9 +1,9 @@
-"""生成《蜂元智能 MES 数据接入规范》（Word）和点表模板（Excel）。
+"""生成《智能 MOM 数据接入规范》（Word）和点表模板（Excel）。
 
-    python docs/接入规范/make_spec.py            → docs/接入规范/蜂元智能MES数据接入规范.docx、点表模板.xlsx
-PDF 用 Word / WPS / LibreOffice 另存（B 机：F:\\vfdev\\scripts\\m2\\docx2pdf.ps1）。
+    python docs/接入规范/make_spec.py            → docs/接入规范/智能MOM数据接入规范.docx、点表模板.xlsx
+PDF 用 Word / WPS / LibreOffice 另存。
 版式：全黑字；正文宋体、标题黑体；编号用（1）（2），不用圆点；不用全角空格；不把图和段落捆在一起。
-点表格式和虚拟工厂交付包（VF docs/interface/点表格式.md）一致。
+点表格式和智能仿真工厂（SimFactory）交付包（SimFactory docs/interface/点表格式.md）一致。
 """
 import os
 import sys
@@ -116,11 +116,11 @@ class Doc:
 
 
 def build(path):
-    from honeymom.factory import pointtable, templates
+    from smartmom.factory import pointtable, templates
     d = Doc()
     for _ in range(5):
         d.d.add_paragraph()
-    d.title('蜂元智能 MES')
+    d.title('智能 MOM')
     d.title('数据接入规范', 26)
     d.center('（系统集成商 / 设备厂家版）', 14)
     for _ in range(10):
@@ -132,10 +132,10 @@ def build(path):
 
     d.h('一、总则')
     d.h('1.1 目的', 2)
-    d.p('本规范规定系统集成商、设备厂家向蜂元智能 MES 交付设备数据时的命名、接入方式、点表、平面图、三维模型和联调验收要求。'
+    d.p('本规范规定系统集成商、设备厂家向智能 MOM 交付设备数据时的命名、接入方式、点表、平面图、三维模型和联调验收要求。'
         '交付物在实施阶段按本规范提交，经 MES 接入中心导入、逐点核对、确认后，同一份工厂模型同时用于设备台账、数据采集、二维 / 三维数字孪生和 AI 数据目录。')
     d.h('1.2 适用范围', 2)
-    d.p('适用于蜂元智能 MES 5.0 及以后版本的新建项目、改造项目和设备增补。与本规范不一致的历史系统，由实施方和集成商在调研阶段书面确认差异和处理办法。')
+    d.p('适用于智能 MOM 5.0 及以后版本的新建项目、改造项目和设备增补。与本规范不一致的历史系统，由实施方和集成商在调研阶段书面确认差异和处理办法。')
     d.h('1.3 术语', 2)
     d.table([['术语', '说明'],
              ['交付包', '集成商一次提交的 zip 文件：点表（points.xlsx）、平面图（layout.dxf）、三维模型（models/*.glb）、说明（README.md）'],
@@ -239,7 +239,7 @@ X-API-Key: hmk_xxxxxxxx_xxxxxxxxxxxxxxxx
     d.h('八、平面图（DXF）要求')
     d.items(['格式：DXF（R12 或 2000 以上的 ASCII 格式），单位米（$INSUNITS = 6），坐标与工厂坐标一致：原点在厂房左下角，X 向右，Y 向上。',
              '图层：墙体、区域、通道、设备、输送线、AGV 路径、文字分层绘制，建议图层名 HM_WALL、HM_AREA、HM_AISLE、HM_DEVICE、HM_CONVEYOR、HM_AGV_PATH、HM_TEXT'
-             '（虚拟工厂交付包使用 VF_ 前缀，同样识别）。区域用闭合多段线画在区域图层，区域名用文字写在区域内。',
+             '（智能仿真工厂交付包使用 VF_ 前缀，同样识别）。区域用闭合多段线画在区域图层，区域名用文字写在区域内。',
              '设备：每台设备一个块参照，块名 DEV_设备编码；插入点 = 设备中心，插入角 = 设备朝向（逆时针为正）；块内画设备外形矩形和一根指向设备自身 +X 方向的短线。',
              '块属性：CODE（设备编码，必填，和点表一致）、NAME（设备名称）、TYPE（设备类型）。MES 按 CODE 自动把设备落到图上的位置，对不上的设备在接入中心拖拽落位。',
              '中文文字使用 UTF-8 或 \\U+XXXX 转义；图纸只保留与布局有关的内容，删除标注、图框和无关图层，文件一般不超过 20 MB。'])
@@ -305,9 +305,9 @@ ROLE_ROWS = [('state', '运行状态', 'Common/State'), ('alarm', '报警', 'Com
 
 
 if __name__ == '__main__':
-    out = os.path.join(HERE, '蜂元智能MES数据接入规范.docx')
+    out = os.path.join(HERE, '智能MOM数据接入规范.docx')
     build(out)
-    from honeymom.factory import pointtable, templates
+    from smartmom.factory import pointtable, templates
     with open(os.path.join(HERE, '点表模板.xlsx'), 'wb') as f:
         f.write(pointtable.template_xlsx([t['name'] for t in templates.BUILTIN]))
     print('saved', os.path.join(HERE, '点表模板.xlsx'))

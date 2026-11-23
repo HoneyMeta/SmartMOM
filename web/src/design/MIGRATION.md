@@ -101,8 +101,8 @@ aiBus.on('context-change', (items) => …);   // 还有 ask / action / dock / fo
 - 路由需要某个功能：在 `router.ts` 里给路由加 `meta: { feature: 'daily' }`，关闭时外壳显示"已关闭"页（不加载页面，不会去调接口）。
 - 菜单项需要某个功能：`layout/nav.ts` 里给项加 `feature`，关闭时置灰并带锁。
 - 页面里的 AI 按钮：`v-if="aiOn('watch')"`（或 `:disabled="!aiOn('watch')"` + 提示 `aiOffText('watch')`）。不要在 AI 关闭时去调 AI 接口——它们会返回 403 `{"code": "ai_disabled"}`，浏览器控制台会有报错。
-- 后端新接口：在 `honeymom/services/ai_switch.py` 的 `ROUTES` 里登记前缀（中间件统一返回"已关闭"），或在接口里调 `ai_switch.require('kb')`。功能是否开启用 `ai_switch.enabled('tool_wear')`。
-- 演示模式：AI 接口用 `ai_demo.run(feature, op, payload, live=…, fallback=…)` 包一层（SSE 用 `ai_demo.run_stream`），就能录制/回放；手工加录制：`POST /api/ai/demo/recordings {feature, op, request, response}`。录制文件在 `honeymom/fixtures/ai_demo/<feature>.json`。
+- 后端新接口：在 `smartmom/services/ai_switch.py` 的 `ROUTES` 里登记前缀（中间件统一返回"已关闭"），或在接口里调 `ai_switch.require('kb')`。功能是否开启用 `ai_switch.enabled('tool_wear')`。
+- 演示模式：AI 接口用 `ai_demo.run(feature, op, payload, live=…, fallback=…)` 包一层（SSE 用 `ai_demo.run_stream`），就能录制/回放；手工加录制：`POST /api/ai/demo/recordings {feature, op, request, response}`。录制文件在 `smartmom/fixtures/ai_demo/<feature>.json`。
 
 ## 6. 检查清单（每页）
 
@@ -117,7 +117,7 @@ aiBus.on('context-change', (items) => …);   // 还有 ask / action / dock / fo
 
 ## 7. AI 体验（4.7）：结构化回答、动作草稿、自动化、值守、日报
 
-后端总入口 `honeymom/services/ai_plus.py`（各模块文件头有完整说明）；前端组件都在 `web/src/ai/`。
+后端总入口 `smartmom/services/ai_plus.py`（各模块文件头有完整说明）；前端组件都在 `web/src/ai/`。
 
 - **结构化回答（块协议）**：AI 回答 = Markdown 文字 + 块（`chart` `table` `kpis` `refs` `sources` `callout` `draft`），协议见 `services/ai_blocks.py` / `ai/blocks.ts`。
   模型在回答末尾给 ```` ```blocks ```` JSON；后端补上数据来源（用过的查询）和单据引用（文字里的 `[[work_order:WO…]]` 和自动编号），核对块里的数字（对不上标"未核实"）。
@@ -130,4 +130,4 @@ aiBus.on('context-change', (items) => …);   // 还有 ask / action / dock / fo
   已注册进工作台信息流（home_feed provider `ai_watch`）。`services/ai_watch.py`。
 - **日报**：`/ai/daily` 杂志式版面（头条、8 个 KPI 带环比、产出 / OEE / 帕累托 / 停机 / 能耗图、亮点与风险、建议动作），导出 PDF（服务端无头 Chrome / Edge），定时生成。
   AI 关闭时同一份报告用规则写亮点和风险。`services/ai_daily.py`。
-- **演示录制**：所有 AI 调用都走 `ai_demo`（右侧助手、解释 / 为什么、日报解读、自动化解析、值守解读、草稿润色、8D 起草、缺陷回溯 / 协同排产解读、智能体的大模型节点）。录制在 `honeymom/fixtures/ai_demo/`。
+- **演示录制**：所有 AI 调用都走 `ai_demo`（右侧助手、解释 / 为什么、日报解读、自动化解析、值守解读、草稿润色、8D 起草、缺陷回溯 / 协同排产解读、智能体的大模型节点）。录制在 `smartmom/fixtures/ai_demo/`。

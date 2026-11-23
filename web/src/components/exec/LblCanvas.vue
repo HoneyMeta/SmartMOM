@@ -76,7 +76,7 @@
 <script setup lang="ts">
 import { $t } from '../../i18n';
 // Label design canvas: SVG in millimetre coordinates (viewBox = mm, scaled by zoom px/mm), 1 / 5 mm grid, 0.5 mm snap.
-// Element rendering matches render_svg in honeymom/labelrender.py (text height = h mm, alignment box width w, after clockwise rotation the bounding box top-left stays at x,y; barcode images from /api/label/barcode.svg).
+// Element rendering matches render_svg in smartmom/labelrender.py (text height = h mm, alignment box width w, after clockwise rotation the bounding box top-left stays at x,y; barcode images from /api/label/barcode.svg).
 // Drag to move, drag handles to resize (lines: drag endpoints); changes write directly into the objects in elements, emitting begin / end at start / finish (parent records undo).
 import { computed, ref } from 'vue';
 import { tok } from '../../api';

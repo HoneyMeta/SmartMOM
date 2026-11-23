@@ -1,11 +1,13 @@
-# HoneyMOM（蜂元智能 MOM）
+# SmartMOM 智能 MOM
 
 [English](README.md) | **简体中文**
 
-[![CI](https://github.com/HoneyMeta/HoneyMOM/actions/workflows/ci.yml/badge.svg)](https://github.com/HoneyMeta/HoneyMOM/actions/workflows/ci.yml)
+> SmartMOM（智能 MOM）原名 HoneyMOM（蜂元智能 MOM），只改了名字，见 [CHANGELOG.md](CHANGELOG.md)。
+
+[![CI](https://github.com/HoneyMeta/SmartMOM/actions/workflows/ci.yml/badge.svg)](https://github.com/HoneyMeta/SmartMOM/actions/workflows/ci.yml)
 [![License: AGPL-3.0-or-later](https://img.shields.io/badge/license-AGPL--3.0--or--later-blue.svg)](LICENSE)
 
-HoneyMOM 是开源的制造运营管理（MOM/MES）系统，面向离散制造工厂，最先为铸造厂、机加工厂和铸造 + 机加一体化工厂设计。
+SmartMOM 是开源的制造运营管理（MOM/MES）系统，面向离散制造工厂，最先为铸造厂、机加工厂和铸造 + 机加一体化工厂设计。
 它覆盖 ISA-95 第 3 层的四个领域（生产、质量、维护、库存运营），内置 ERP（销售、采购、MRP、成本），
 自己通过 MQTT、Sparkplug B、OPC UA、Modbus TCP、HTTP 推送和中间库采集设备数据。AI 功能（按权限查数据的助手、日报、
 异常值守、带人工审批的智能体、供外部 AI 工具使用的 MCP 接口）可接任何 OpenAI 兼容的大模型，管理员开启之前全部关闭。
@@ -110,8 +112,8 @@ HoneyMOM 是开源的制造运营管理（MOM/MES）系统，面向离散制造�
 需要 Docker 和 Compose v2。
 
 ```bash
-git clone https://github.com/HoneyMeta/HoneyMOM.git
-cd HoneyMOM
+git clone https://github.com/HoneyMeta/SmartMOM.git
+cd SmartMOM
 docker compose up
 ```
 
@@ -119,7 +121,31 @@ docker compose up
 `manager`、`planner`、`leader`、`operator`、`qc`、`maint`、`wh`、`engineer`（密码相同）。回放器开始发数据后，
 驾驶舱、工厂地图和 OEE 大约一分钟内就有数。
 
-`docker compose up` 会启动三个容器：`mom`（HoneyMOM 和网页）、`db`（PostgreSQL 17）、`replayer`（回放器）。
+`docker compose up` 会启动三个容器：`mom`（SmartMOM 和网页）、`db`（PostgreSQL 17）、`replayer`（回放器）。
+
+### Docker + 实时仿真工厂（SimFactory）
+
+回放器播放的是示范工厂录下来的一天。[SimFactory（智能仿真工厂）](https://github.com/HoneyMeta/SimFactory)
+实时仿真同一个工厂：可以调速度、注入故障、停机，看智能 MOM 怎么反应。用它做数据源：
+
+```bash
+docker compose --profile factory up
+```
+
+会多一个 `simfactory` 容器（镜像 `ghcr.io/honeymeta/simfactory:latest`，演示模式），网页在
+http://localhost:8800（`admin` / `honey123`）。这时回放器不播放录制，而是把演示端口（MQTT 1883、OPC UA 4840、
+Modbus TCP 5020、网页 8800）转发给 SimFactory，智能 MOM 的演示数据源不用改。不带 `--profile factory` 启动就回到录制数据。
+需要 Docker Compose 2.20 以上。
+
+不拉镜像、用旁边的源码目录构建 SimFactory：
+
+```bash
+git clone https://github.com/HoneyMeta/SimFactory.git ../SimFactory
+docker compose -f docker-compose.yml -f docker/compose.factory-build.yml --profile factory up --build
+```
+
+接其他工厂、或者 SimFactory 在另一台机器上：见
+[docs/getting-started.md](docs/getting-started.md#with-the-live-plant-simulator-simfactory)（英文）。
 
 演示数据默认是英文；要中文演示数据，在 `.env` 里写 `MOM_DEMO_LANG=zh`（只在第一次建库时生效）。
 
@@ -145,12 +171,15 @@ cd web && npm ci && npm run build && cd ..
 # 终端 1：工厂数据
 python -m replayer
 
-# 终端 2：演示模式启动 HoneyMOM，SQLite 数据库在 data/mes.db
-MOM_DEMO=1 python -m honeymom serve  # Windows：set MOM_DEMO=1 后再运行 python -m honeymom serve
+# 终端 2：演示模式启动 SmartMOM，SQLite 数据库在 data/mes.db
+MOM_DEMO=1 python -m smartmom serve  # Windows：set MOM_DEMO=1 后再运行 python -m smartmom serve
 ```
 
+也可以不用回放器，在同一台机器上以演示模式运行 [SimFactory（智能仿真工厂）](https://github.com/HoneyMeta/SimFactory)：
+它在同样的端口（MQTT 1883、OPC UA 4840、Modbus TCP 5020）提供同一个示范工厂。
+
 打开 http://localhost:8900。不设 `MOM_DEMO=1` 就是正式安装：没有账号、没有演示数据；在浏览器里创建管理员，
-或者运行 `python -m honeymom create-admin --username admin`。
+或者运行 `python -m smartmom create-admin --username admin`。
 
 改前端时在 `web/` 里运行 `npm run dev`（Vite，端口 5190，`/api` 转发到 8900）。
 
@@ -165,15 +194,15 @@ MOM_DEMO=1 python -m honeymom serve  # Windows：set MOM_DEMO=1 后再运行 pyt
 | `MOM_DEMO` | 关 | `1`：演示账号（密码 `honey123`）和示范工厂数据。不设：正式安装。 |
 | `MOM_DEMO_LANG` | `en` | 演示数据语言，`en` 或 `zh`，第一次建库时生效。 |
 | `MOM_LANG` | 演示语言，否则 `en` | 请求没带语言时和后台生成的文字用的默认语言。 |
-| `MOM_DB` | `sqlite:///<数据目录>/mes.db` | 数据库地址，如 `postgresql+psycopg://用户:密码@主机:5432/honeymom`。 |
+| `MOM_DB` | `sqlite:///<数据目录>/mes.db` | 数据库地址，如 `postgresql+psycopg://用户:密码@主机:5432/smartmom`。 |
 | `MOM_DATA` | `./data` | 数据目录：SQLite 库、上传的文件、备份。 |
 | `MOM_BACKUP_DIR` | `<数据目录>/backups` | 备份存放位置。 |
 | `MOM_LLM_BASE_URL`、`MOM_LLM_API_KEY`、`MOM_LLM_MODEL` | – | AI 功能用的 OpenAI 兼容接口。 |
-| `MOM_ADMIN_PASSWORD` | – | `python -m honeymom create-admin` 不提示输入时用的密码。 |
+| `MOM_ADMIN_PASSWORD` | – | `python -m smartmom create-admin` 不提示输入时用的密码。 |
 
 旧版本的变量名（`MES_DB`、`HM_DATA`、`MES_LLM_*` 和其他 `MES_*` / `HM_*`）仍然有效；新旧都设置时以 `MOM_*` 为准。
 
-`python -m honeymom serve` 另有 `--http <端口>`（默认 8900）、`--host`（默认 `0.0.0.0`）、`--db <地址>`。
+`python -m smartmom serve` 另有 `--http <端口>`（默认 8900）、`--host`（默认 `0.0.0.0`）、`--db <地址>`。
 完整列表见 [docs/configuration.md](docs/configuration.md)。公司信息、班次、备份时间、AI 开关、MCP 限流等在网页的
 **系统**菜单里改。
 
@@ -204,7 +233,7 @@ AI 功能用 OpenAI 的 chat completions 接口格式（`POST <base_url>/chat/co
 外部 AI 工具                                            ──MCP /mcp───┤
 外部 ERP                                                ──REST / Webhook / 中间库──┤
                                                                      ▼
-HoneyMOM：一个 Python 进程（FastAPI）
+SmartMOM：一个 Python 进程（FastAPI）
   · 生产、质量、维护、库存、内置 ERP、排产
   · AI 助手、智能体、值守；权限、审计、备份、迁移
   · 采集：MQTT、Sparkplug B、OPC UA、Modbus TCP、HTTP 推送、中间库
@@ -215,12 +244,12 @@ HoneyMOM：一个 Python 进程（FastAPI）
 SQLite 或 PostgreSQL（+ TimescaleDB）     PLC、网关、MQTT 服务器，或回放器
 ```
 
-- `honeymom/schema*.py`：实体定义。一份定义同时生成数据库表、通用接口（`/api/e/<实体>`）和前端的列表、表单页面。
-- `honeymom/services/`、`honeymom/erp/`、`honeymom/factory/`、`honeymom/impl/`、`honeymom/agent/`：业务服务、内置 ERP、
+- `smartmom/schema*.py`：实体定义。一份定义同时生成数据库表、通用接口（`/api/e/<实体>`）和前端的列表、表单页面。
+- `smartmom/services/`、`smartmom/erp/`、`smartmom/factory/`、`smartmom/impl/`、`smartmom/agent/`：业务服务、内置 ERP、
   工厂模型与接入、实施配置工具、智能体引擎。
-- `honeymom/collector.py`、`honeymom/ingest.py`、`honeymom/ts.py`：协议连接器，点位值到业务记录的映射（设备状态、报警、电能、
+- `smartmom/collector.py`、`smartmom/ingest.py`、`smartmom/ts.py`：协议连接器，点位值到业务记录的映射（设备状态、报警、电能、
   计数、刀具寿命、零件事件），时序。
-- `honeymom/migrations/`：版本化迁移，启动时自动执行。
+- `smartmom/migrations/`：版本化迁移，启动时自动执行。
 - `web/`：Vue 3 单页应用，构建到 `web/dist`，由后端直接提供。
 - `replayer/`：按工厂提供的同样接口回放录制数据，见 [replayer/README.md](replayer/README.md)。
 - `tests/`：接口和进程内检查（`*_check.py`）、浏览器走查（`*_ui.js`）。
@@ -241,7 +270,7 @@ SQLite 或 PostgreSQL（+ TimescaleDB）     PLC、网关、MQTT 服务器，或
 
 Copyright (C) 2026 蜂元科技（郑州）有限责任公司（HoneyMeta Technology (Zhengzhou) Co., Ltd.）
 
-HoneyMOM 采用 **GNU Affero 通用公共许可证 v3.0 或更高版本**（[LICENSE](LICENSE)）。如果你修改后通过网络给用户使用，
+SmartMOM 采用 **GNU Affero 通用公共许可证 v3.0 或更高版本**（[LICENSE](LICENSE)）。如果你修改后通过网络给用户使用，
 AGPL 要求你向这些用户提供修改后的源代码。
 
 需要不承担 AGPL 义务的使用方式（比如放进闭源产品、做成托管服务），可以购买**商业许可证**，也可以包含带 SLA 的技术支持。
@@ -255,4 +284,4 @@ AGPL 要求你向这些用户提供修改后的源代码。
 贡献者需要签一次 [CLA](CLA.md)，第一次提交 pull request 时 CLA 机器人会提示。请遵守[行为准则](CODE_OF_CONDUCT.md)，
 安全问题请按 [SECURITY.md](SECURITY.md) 私下报告。
 
-主仓库：https://github.com/HoneyMeta/HoneyMOM 。Gitee 和 GitCode 上有只读镜像。
+主仓库：https://github.com/HoneyMeta/SmartMOM 。Gitee 和 GitCode 上有只读镜像。

@@ -6,7 +6,7 @@ body:
     id: problem
     attributes:
       label: Problem
-      description: What do you need to do on the shop floor or in the office that HoneyMOM does not support today?
+      description: What do you need to do on the shop floor or in the office that SmartMOM does not support today?
     validations:
       required: true
   - type: textarea

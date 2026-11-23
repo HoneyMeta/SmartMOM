@@ -6,7 +6,7 @@ G Sparkplug B（测试发布器：NBIRTH / DBIRTH / DDATA 别名）             
 I 交付包导入（幂等、版本、比对）                                               J 采集工作线程：锁库期间接口照常响应
 K 原始现场：AI 草稿（演示模式）+ 标准答案打分                                   L 读 PLC 程序（软 PLC / PLCopen XML / 博途符号表）
 M 联调验收报告（Word / PDF）                                                   N 数据范围：驾驶舱 / 大屏 / 平面图 / OEE / 能耗
-用法：python tests/onboard_check.py [--only A,C,…]；A 需要 LIVE_DB（线上库只读副本，缺省 F:\\vfdev\\copies\\m1_live_src\\mes.db），J 需要 MES_DATA（MES 数据目录，SQLite）或 MES_DB（PostgreSQL URL）。
+用法：python tests/onboard_check.py [--only A,C,…]；A 需要 LIVE_DB（线上库的只读副本），J 需要 MES_DATA（MES 数据目录，SQLite）或 MES_DB（PostgreSQL URL）。
 """
 import base64
 import io
@@ -161,9 +161,9 @@ if section('A', '老库迁移（4.7 线上库副本）'):
         code = r'''
 import json, sys, os
 sys.path.insert(0, os.environ['HM_ROOT'])
-from honeymom import db, migrations
+from smartmom import db, migrations
 import sqlalchemy as sa
-from honeymom.migrations import v0100_factory_model as m
+from smartmom.migrations import v0100_factory_model as m
 t0 = __import__('time').time()
 db.init(migrate_db=False)
 migrations.upgrade(db.engine, target='0199')          # 只到 M2 的迁移段（别的模块的迁移在它们自己的检查里）
@@ -358,7 +358,7 @@ if section('E', 'MQTT 发现'):
 # ───────────────────────── G Sparkplug B ─────────────────────────
 if section('G', 'Sparkplug B'):
     sys.path.insert(0, ROOT)
-    from honeymom.factory import sparkplug as spb
+    from smartmom.factory import sparkplug as spb
     did = mk_ds('T-SPB', 'sparkplug', MQTT, 'OCG')
     time.sleep(2)
     wait(lambda: any(s['id'] == did and '已连接' in (s['status'] or '') for s in api('GET', '/api/onboard/summary')['sources']), 30)

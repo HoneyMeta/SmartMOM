@@ -38,7 +38,7 @@ body:
       options:
         - docker compose (demo mode)
         - docker compose (production mode)
-        - bare metal / python -m honeymom serve
+        - bare metal / python -m smartmom serve
         - other
     validations:
       required: true

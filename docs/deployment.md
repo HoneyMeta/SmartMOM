@@ -7,7 +7,7 @@
 - [Backups](#backups)
 - [Upgrades](#upgrades)
 
-HoneyMOM runs as **one server process** per installation: it serves the API and the web UI, runs the collectors, the
+SmartMOM runs as **one server process** per installation: it serves the API and the web UI, runs the collectors, the
 agent runtime and the backup scheduler. Run one instance per database.
 
 ## Docker
@@ -17,7 +17,7 @@ The repository contains a multi-stage `Dockerfile` (Node builds `web/dist`, then
 
 | Service | Image | Purpose |
 |---|---|---|
-| `mom` | built from the repository (`honeymom:local`) or `ghcr.io/honeymeta/honeymom` | HoneyMOM on port 8900, data in volume `mom-data` (`/data`) |
+| `mom` | built from the repository (`smartmom:local`) or `ghcr.io/honeymeta/smartmom` | SmartMOM on port 8900, data in volume `mom-data` (`/data`) |
 | `db` | `postgres:17` | database, data in volume `pg-data` |
 | `replayer` | same image as `mom` | demo plant data over MQTT, OPC UA, Modbus TCP |
 
@@ -27,7 +27,7 @@ PostgreSQL 17 client tools for backups. It contains no web browser, so the PDF e
 PDF outputs work.
 
 The compose file uses the `MOM_*` variable names. Older names (`MES_DB`, `HM_DATA`, `MES_LLM_*`, ...) are still
-accepted by HoneyMOM, see [configuration.md](configuration.md#environment-variables).
+accepted by SmartMOM, see [configuration.md](configuration.md#environment-variables).
 
 ### Demo
 
@@ -51,7 +51,7 @@ with `--profile replayer` to rehearse onboarding).
 On the first start, create the administrator in the browser or with
 
 ```bash
-docker compose exec mom python -m honeymom create-admin --username admin
+docker compose exec mom python -m smartmom create-admin --username admin
 ```
 
 Start production on new volumes. A database that was seeded in demo mode keeps its demo accounts and data; switching
@@ -60,12 +60,12 @@ Start production on new volumes. A database that was seeded in demo mode keeps i
 
 ### Using the published image
 
-Tagged releases are published to `ghcr.io/honeymeta/honeymom` (`latest`, `X.Y.Z`, `X.Y`). To run a published image
+Tagged releases are published to `ghcr.io/honeymeta/smartmom` (`latest`, `X.Y.Z`, `X.Y`). To run a published image
 instead of building:
 
 ```bash
 # .env
-HONEYMOM_IMAGE=ghcr.io/honeymeta/honeymom:1.0.0
+SMARTMOM_IMAGE=ghcr.io/honeymeta/smartmom:1.0.0
 ```
 
 ```bash
@@ -77,8 +77,8 @@ docker compose up -d --no-build
 
 ```bash
 docker compose logs -f mom
-docker compose exec mom python -m honeymom db status
-docker compose exec mom python -m honeymom backup --note "before upgrade"
+docker compose exec mom python -m smartmom db status
+docker compose exec mom python -m smartmom backup --note "before upgrade"
 docker compose restart mom replayer        # restart the replayer together with mom (it shares mom's network)
 ```
 
@@ -94,51 +94,51 @@ run the `mom` service with `network_mode: host` (Linux) in your own override fil
 Requirements: Python 3.12, Node.js 20+ to build the web UI, optionally PostgreSQL 16 or 17 and its client tools.
 
 ```bash
-git clone https://github.com/HoneyMeta/HoneyMOM.git /opt/honeymom
-cd /opt/honeymom
+git clone https://github.com/HoneyMeta/SmartMOM.git /opt/smartmom
+cd /opt/smartmom
 python3.12 -m venv .venv
 .venv/bin/pip install -r requirements.txt
 (cd web && npm ci && npm run build)
-MOM_DATA=/var/lib/honeymom MOM_DB=postgresql+psycopg://honeymom:...@localhost:5432/honeymom \
-  .venv/bin/python -m honeymom serve --http 8900
+MOM_DATA=/var/lib/smartmom MOM_DB=postgresql+psycopg://smartmom:...@localhost:5432/smartmom \
+  .venv/bin/python -m smartmom serve --http 8900
 ```
 
 If `web/dist` is missing the server still starts, but only the API is available.
 
 ### systemd
 
-`/etc/systemd/system/honeymom.service`:
+`/etc/systemd/system/smartmom.service`:
 
 ```ini
 [Unit]
-Description=HoneyMOM
+Description=SmartMOM
 After=network-online.target postgresql.service
 Wants=network-online.target
 
 [Service]
-User=honeymom
-WorkingDirectory=/opt/honeymom
-Environment=MOM_DATA=/var/lib/honeymom
-EnvironmentFile=/etc/honeymom/honeymom.env
-ExecStart=/opt/honeymom/.venv/bin/python -m honeymom serve --http 8900
+User=smartmom
+WorkingDirectory=/opt/smartmom
+Environment=MOM_DATA=/var/lib/smartmom
+EnvironmentFile=/etc/smartmom/smartmom.env
+ExecStart=/opt/smartmom/.venv/bin/python -m smartmom serve --http 8900
 Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target
 ```
 
-`/etc/honeymom/honeymom.env` (readable only by root and the service user) holds `MOM_DB`, `MOM_LLM_*` and other
+`/etc/smartmom/smartmom.env` (readable only by root and the service user) holds `MOM_DB`, `MOM_LLM_*` and other
 variables from [configuration.md](configuration.md).
 
 ```bash
-sudo useradd --system --home /var/lib/honeymom --create-home honeymom
-sudo systemctl daemon-reload && sudo systemctl enable --now honeymom
+sudo useradd --system --home /var/lib/smartmom --create-home smartmom
+sudo systemctl daemon-reload && sudo systemctl enable --now smartmom
 ```
 
 ### Windows
 
 Install Python 3.12 and Node.js, build the web UI as above, then start with
-`python -m honeymom serve` from the repository directory (set variables with `set NAME=value` first). To run it as a
+`python -m smartmom serve` from the repository directory (set variables with `set NAME=value` first). To run it as a
 service, use a service wrapper of your choice that starts this command in the repository directory.
 
 ## PostgreSQL
@@ -146,15 +146,15 @@ service, use a service wrapper of your choice that starts this command in the re
 SQLite (the default) is fine for evaluation and small single-user setups. Use PostgreSQL for production.
 
 ```sql
-CREATE USER honeymom WITH PASSWORD '...';
-CREATE DATABASE honeymom OWNER honeymom;
+CREATE USER smartmom WITH PASSWORD '...';
+CREATE DATABASE smartmom OWNER smartmom;
 ```
 
 ```bash
-MOM_DB=postgresql+psycopg://honeymom:PASSWORD@dbhost:5432/honeymom
+MOM_DB=postgresql+psycopg://smartmom:PASSWORD@dbhost:5432/smartmom
 ```
 
-- The schema is created and migrated automatically at start-up. `python -m honeymom db status`, `db upgrade
+- The schema is created and migrated automatically at start-up. `python -m smartmom db status`, `db upgrade
   --dry-run` and `db check` inspect it.
 - **TimescaleDB (optional):** when the extension is available and the user may create it, the time-series tables
   become hypertables with continuous aggregates. Otherwise native partitioning is used. `MOM_TS_TIMESCALE=0` forces
@@ -166,7 +166,7 @@ MOM_DB=postgresql+psycopg://honeymom:PASSWORD@dbhost:5432/honeymom
 
 ## Reverse proxy and HTTPS
 
-HoneyMOM serves plain HTTP. Put a reverse proxy with TLS in front of it when it is reachable beyond a trusted network.
+SmartMOM serves plain HTTP. Put a reverse proxy with TLS in front of it when it is reachable beyond a trusted network.
 Phones need HTTPS (or `localhost`) for camera barcode scanning in the mobile app. The AI assistant streams answers
 with server-sent events, so disable response buffering for `/api/`.
 
@@ -203,21 +203,21 @@ server {
 From the command line:
 
 ```bash
-python -m honeymom backup --note "before upgrade"            # prints the archive path
-python -m honeymom restore backups/<archive>.zip --to /var/lib/honeymom-restored \
-       [--to-db postgresql+psycopg://honeymom:...@dbhost:5432/honeymom_restored]
+python -m smartmom backup --note "before upgrade"            # prints the archive path
+python -m smartmom restore backups/<archive>.zip --to /var/lib/smartmom-restored \
+       [--to-db postgresql+psycopg://smartmom:...@dbhost:5432/smartmom_restored]
 ```
 
 `restore` never overwrites the current data: it restores into a new data directory (and, for PostgreSQL, a new
-database) and verifies the result. To switch over, stop HoneyMOM, point `MOM_DATA` / `MOM_DB` at the restored copy and
+database) and verifies the result. To switch over, stop SmartMOM, point `MOM_DATA` / `MOM_DB` at the restored copy and
 start it again.
 
 Copy the backup directory to another machine regularly. With Docker, backups are in the `mom-data` volume under
 `/data/backups`:
 
 ```bash
-docker compose exec mom python -m honeymom backup --note manual
-docker compose cp mom:/data/backups ./honeymom-backups
+docker compose exec mom python -m smartmom backup --note manual
+docker compose cp mom:/data/backups ./smartmom-backups
 ```
 
 In addition you can back up the `pg-data` volume with your usual PostgreSQL tooling.
@@ -225,14 +225,14 @@ In addition you can back up the `pg-data` volume with your usual PostgreSQL tool
 ## Upgrades
 
 1. Read the release notes.
-2. Back up (`python -m honeymom backup`).
+2. Back up (`python -m smartmom backup`).
 3. Update the code or image:
    - Docker, built locally: `git pull && docker compose build && docker compose up -d`
-   - Docker, published image: change `HONEYMOM_IMAGE` in `.env`, then `docker compose pull mom replayer && docker
+   - Docker, published image: change `SMARTMOM_IMAGE` in `.env`, then `docker compose pull mom replayer && docker
      compose up -d --no-build`
    - bare metal: `git pull`, `pip install -r requirements.txt`, `cd web && npm ci && npm run build`
-4. Optionally preview the migrations: `python -m honeymom db upgrade --dry-run`.
-5. Start HoneyMOM. Pending migrations run automatically at start-up; the server refuses to start if the database and
+4. Optionally preview the migrations: `python -m smartmom db upgrade --dry-run`.
+5. Start SmartMOM. Pending migrations run automatically at start-up; the server refuses to start if the database and
    the schema do not match afterwards.
 
 Downgrades are not supported; to go back, restore the backup taken before the upgrade.

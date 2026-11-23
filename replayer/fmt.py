@@ -1,4 +1,4 @@
-# HoneyMOM plant data replayer - SPDX-License-Identifier: AGPL-3.0-or-later
+# SmartMOM plant data replayer - SPDX-License-Identifier: AGPL-3.0-or-later
 """Recording format "honeymom-replay/1": gzip JSONL.
 
 Line 1 is the header (JSON object): plant, t0 (recording start, ISO 8601 with offset), duration_ms, topics, topic_units,

@@ -2,9 +2,9 @@
   <header class="hm-top" data-test="top-bar">
     <div class="brand" :class="{ narrow: navCollapsed }">
       <button class="burger" :aria-label="$t('topBar.menu')" @click="$emit('burger')"><el-icon><Menu /></el-icon></button>
-      <a class="logo" href="/" @click.prevent="router.push('/')" :aria-label="$t('topBar.honeymomHome')">
+      <a class="logo" href="/" @click.prevent="router.push('/')" :aria-label="$t('topBar.smartmomHome')">
         <img src="/brand/mark.svg" alt="" width="28" height="28" />
-        <span v-if="!navCollapsed" class="bt"><b>{{ $t('common.honeymom') }}</b><small :title="$t('topBar.manufacturingOperationsManagement')">{{ $t('topBar.subtitleShort') }}</small></span>
+        <span v-if="!navCollapsed" class="bt"><b>{{ $t('common.smartmom') }}</b><small :title="$t('topBar.manufacturingOperationsManagement')">{{ $t('topBar.subtitleShort') }}</small></span>
       </a>
     </div>
 
@@ -87,7 +87,7 @@ const router = useRouter();
 const notices = ref<any[]>([]);
 const roleText = computed(() => (session.user?.role_list || []).map((r: string) => session.meta?.roles[r] || r).join($t('common.k42')));
 const connCls = computed(() => (!shell.ok ? 'bad' : !shell.collect.total ? 'off' : shell.collect.online === shell.collect.total ? 'good' : shell.collect.online ? 'warn' : 'bad'));
-const connTip = computed(() => !shell.ok ? $t('topBar.canTReachTheHoneymom') : shell.sources.filter((s) => s.enabled).map((s) => $t('common.n012', [s.name, s.status || $t('common.notConnected')])).join($t('common.k764')) || $t('topBar.noDataSourcesEnabled'));
+const connTip = computed(() => !shell.ok ? $t('topBar.canTReachTheSmartmom') : shell.sources.filter((s) => s.enabled).map((s) => $t('common.n012', [s.name, s.status || $t('common.notConnected')])).join($t('common.k764')) || $t('topBar.noDataSourcesEnabled'));
 
 async function loadNotices() { const r = await get('/api/notices', true).catch(() => ({ items: [], unread: 0 })); notices.value = r.items; shell.unread = r.unread; }
 async function readAll() { await post('/api/notices/read', {}); loadNotices(); }

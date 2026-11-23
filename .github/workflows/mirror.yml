@@ -6,8 +6,8 @@
 # A mirror is skipped when its secret is not set.
 #
 # Optional repository variables (defaults in brackets):
-#   GITEE_USER [HoneyMeta]    GITEE_REPO [HoneyMeta/HoneyMOM]
-#   GITCODE_USER [HoneyMeta]  GITCODE_REPO [HoneyMeta/HoneyMOM]
+#   GITEE_USER [HoneyMeta]    GITEE_REPO [HoneyMeta/SmartMOM]
+#   GITCODE_USER [HoneyMeta]  GITCODE_REPO [HoneyMeta/SmartMOM]
 #
 # Branches and tags are mirrored; the cla-signatures branch and pull-request refs are not.
 name: Mirror
@@ -28,7 +28,7 @@ concurrency:
 
 jobs:
   mirror:
-    if: github.repository == 'HoneyMeta/HoneyMOM'
+    if: github.repository == 'HoneyMeta/SmartMOM'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -42,7 +42,7 @@ jobs:
       # two separate expressions: an empty GITEE_TOKEN must not fall through to GITCODE_TOKEN
       TOKEN: ${{ matrix.name == 'gitee' && secrets.GITEE_TOKEN || '' }}${{ matrix.name == 'gitcode' && secrets.GITCODE_TOKEN || '' }}
       MIRROR_USER: ${{ matrix.name == 'gitee' && (vars.GITEE_USER || 'HoneyMeta') || (vars.GITCODE_USER || 'HoneyMeta') }}
-      MIRROR_REPO: ${{ matrix.name == 'gitee' && (vars.GITEE_REPO || 'HoneyMeta/HoneyMOM') || (vars.GITCODE_REPO || 'HoneyMeta/HoneyMOM') }}
+      MIRROR_REPO: ${{ matrix.name == 'gitee' && (vars.GITEE_REPO || 'HoneyMeta/SmartMOM') || (vars.GITCODE_REPO || 'HoneyMeta/SmartMOM') }}
     steps:
       - name: Skip when the token is not configured
         if: env.TOKEN == ''

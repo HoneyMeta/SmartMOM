@@ -1,4 +1,4 @@
-// "Block" protocol for AI generative answers (backend honeymom/services/ai_blocks.py is authoritative). Rendered by AiBlocks.vue; types and helpers live here.
+// "Block" protocol for AI generative answers (backend smartmom/services/ai_blocks.py is authoritative). Rendered by AiBlocks.vue; types and helpers live here.
 import { CH, PALETTE } from '../design/chart';
 import { fmtBy } from '../design/format';
 import { md } from '../md';

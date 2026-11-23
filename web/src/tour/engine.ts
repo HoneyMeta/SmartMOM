@@ -1,4 +1,4 @@
-// Guided tour engine (slimmed-down port of the Virtual Factory 4.7 tour engine: VF web/src/panels/teach/tour/tour.ts).
+// Guided tour engine (slimmed-down port of the SimFactory 4.7 tour engine: VF web/src/panels/teach/tour/tour.ts).
 // A tour = several steps; each step spotlights a target on the page (data-tour="name" or a CSS selector) with a step card beside it (Back / Next / Skip / Exit);
 // a step can first navigate to another page (route) or click something open (click), so one tour can walk users through a task across pages.
 // Refreshing resumes the current step (sessionStorage); exiting midway remembers the step and next time asks "Resume / Start over" (localStorage).

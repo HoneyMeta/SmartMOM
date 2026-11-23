@@ -8,7 +8,7 @@
 
 ## Checklist
 
-- [ ] Schema changes come with a migration (`honeymom/migrations/vNNNN_*.py`) and `python -m honeymom db check` passes
+- [ ] Schema changes come with a migration (`smartmom/migrations/vNNNN_*.py`) and `python -m smartmom db check` passes
 - [ ] New user-visible texts are translated (`python tests/i18n_check.py`, `python tests/i18n_web_check.py`)
 - [ ] No secrets, tokens, real customer names or personal data in code, fixtures, screenshots or recordings
-- [ ] I have signed the [CLA](https://github.com/HoneyMeta/HoneyMOM/blob/main/CLA.md) (the CLA bot asks on your first pull request)
+- [ ] I have signed the [CLA](https://github.com/HoneyMeta/SmartMOM/blob/main/CLA.md) (the CLA bot asks on your first pull request)

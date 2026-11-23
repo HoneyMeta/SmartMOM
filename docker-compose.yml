@@ -1,32 +1,39 @@
-# HoneyMOM one-command start:  docker compose up
+# SmartMOM one-command start:  docker compose up
 #
-#   mom       HoneyMOM (API + web UI)                       http://localhost:8900
+#   mom       SmartMOM (API + web UI)                       http://localhost:8900
 #   db        PostgreSQL 17
 #   replayer  plays back a recorded day of the demo foundry over MQTT, OPC UA and Modbus TCP
 #
 # Default = demo mode (MOM_DEMO=1): demo accounts admin / manager / planner / ... with password honey123, the demo plant
 # "Northfield Castings" and live data from the replayer. Do not expose a demo instance to an untrusted network.
 #
+# Live plant simulator instead of the recording (profile "factory"):
+#   docker compose --profile factory up
+#   simfactory  SimFactory, the plant simulator, running the same demo plant live    http://localhost:8800
+# The replayer then plays nothing: it relays the demo ports (MQTT 1883, OPC UA 4840, Modbus 5020, web 8800) to the
+# simfactory container, so SmartMOM's demo data sources read the live simulation without any change. To build SimFactory
+# from a sibling checkout instead of pulling ghcr.io/honeymeta/simfactory, add -f docker/compose.factory-build.yml.
+#
 # Production mode (no demo data, first start asks for the administrator):
 #   docker compose -f docker-compose.yml -f docker/compose.production.yml up -d
 # See docs/deployment.md. Settings can go into a .env file next to this file (template: docker/env.example).
 
-name: honeymom
+name: smartmom
 
-x-honeymom-image: &honeymom-image
-  image: ${HONEYMOM_IMAGE:-honeymom:local}
+x-smartmom-image: &smartmom-image
+  image: ${SMARTMOM_IMAGE:-smartmom:local}
   build:
     context: .
 
 services:
   mom:
-    <<: *honeymom-image
+    <<: *smartmom-image
     restart: unless-stopped
     environment:
       MOM_DEMO: ${MOM_DEMO:-1}
       MOM_DEMO_LANG: ${MOM_DEMO_LANG:-en}
       MOM_LANG: ${MOM_LANG:-}
-      MOM_DB: postgresql+psycopg://${POSTGRES_USER:-honeymom}:${POSTGRES_PASSWORD:-honeymom}@db:5432/${POSTGRES_DB:-honeymom}
+      MOM_DB: postgresql+psycopg://${POSTGRES_USER:-smartmom}:${POSTGRES_PASSWORD:-smartmom}@db:5432/${POSTGRES_DB:-smartmom}
       MOM_DATA: /data
       TZ: ${TZ:-UTC}
       # AI (OpenAI-compatible endpoint, no defaults): a model is called only when all three are set, and each AI
@@ -48,9 +55,11 @@ services:
         condition: service_healthy
 
   replayer:
-    <<: *honeymom-image
+    <<: *smartmom-image
     restart: unless-stopped
-    command: ["python", "-m", "replayer", "--host", "0.0.0.0", "--speed", "${REPLAYER_SPEED:-1}"]
+    # --forward-to simfactory: when the factory profile is active (the host name "simfactory" resolves), relay the demo
+    # ports to SimFactory instead of playing back the recording.
+    command: ["python", "-m", "replayer", "--host", "0.0.0.0", "--speed", "${REPLAYER_SPEED:-1}", "--forward-to", "simfactory"]
     environment:
       TZ: ${TZ:-UTC}
     # Same network namespace as mom: the demo data sources point at 127.0.0.1:1883 (MQTT),
@@ -60,16 +69,35 @@ services:
       mom:
         condition: service_started
         restart: true
+      simfactory:
+        condition: service_started
+        required: false      # only with --profile factory (needs Docker Compose 2.20 or later)
     healthcheck:
       disable: true
+
+  simfactory:
+    profiles: ["factory"]
+    image: ${SIMFACTORY_IMAGE:-ghcr.io/honeymeta/simfactory:latest}
+    restart: unless-stopped
+    environment:
+      VF_DEMO: "1"                 # demo plant foundry-housing, the plant SmartMOM's demo data is mapped to
+      VF_LANG: ${VF_LANG:-en}
+      TZ: ${TZ:-UTC}
+    ports:
+      - "${SIMFACTORY_PORT:-8800}:8800"   # SimFactory web UI and API (demo accounts admin / engineer / guest, honey123)
+      # Protocol servers, only needed for clients on the host (SmartMOM reaches them through the replayer):
+      # - "127.0.0.1:1883:1883"   # MQTT
+      # - "127.0.0.1:4840:4840"   # OPC UA
+    volumes:
+      - vf-data:/data
 
   db:
     image: postgres:17
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-honeymom}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-honeymom}
-      POSTGRES_DB: ${POSTGRES_DB:-honeymom}
+      POSTGRES_USER: ${POSTGRES_USER:-smartmom}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-smartmom}
+      POSTGRES_DB: ${POSTGRES_DB:-smartmom}
       TZ: ${TZ:-UTC}
     volumes:
       - pg-data:/var/lib/postgresql/data
@@ -82,3 +110,4 @@ services:
 volumes:
   mom-data:
   pg-data:
+  vf-data:

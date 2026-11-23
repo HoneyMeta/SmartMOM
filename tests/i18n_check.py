@@ -1,4 +1,4 @@
-"""i18n check: lists Chinese string literals in honeymom/ that are not covered by the message catalogue.
+"""i18n check: lists Chinese string literals in smartmom/ that are not covered by the message catalogue.
 
     python tests/i18n_check.py                 report; exit 1 when something is not in the allowlist
     python tests/i18n_check.py --write-allowlist   (maintainers) rewrite tests/i18n_allowlist.json with the current findings
@@ -6,7 +6,7 @@
 Rules (comments and docstrings are ignored):
   hard-coded    a Chinese literal inside a function that is not passed through _tr(...)
                 (parsing keywords, regexes, comparisons with stored values... belong in the allowlist with a reason)
-  untranslated  a _tr() message id or a module-level Chinese label without an English entry in honeymom/locale/en.json
+  untranslated  a _tr() message id or a module-level Chinese label without an English entry in smartmom/locale/en.json
   data          demo/seed data (seed*.py, label_builtin.py, migrations/, packs/*.json) without an entry in locale/data-en.json
 Not checked: fixtures/ai_demo (recorded zh demo answers; English falls back with a note), locale/.
 """
@@ -16,7 +16,7 @@ import os
 import re
 import sys
 
-ROOT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'honeymom')
+ROOT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'smartmom')
 ALLOW = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'i18n_allowlist.json')
 CJK = re.compile(r'[　-〿一-鿿＀-￯]')
 DATA = re.compile(r'(^|[\\/])(seed[a-z_]*\.py|label_builtin\.py)$|(^|[\\/])migrations[\\/]')

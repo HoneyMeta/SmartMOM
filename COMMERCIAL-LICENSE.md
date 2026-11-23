@@ -1,6 +1,6 @@
 # Commercial license
 
-HoneyMOM is dual-licensed:
+SmartMOM is dual-licensed:
 
 1. **GNU Affero General Public License v3.0 or later (AGPL-3.0-or-later)**, the full text is in [LICENSE](LICENSE).
    Free of charge. Use it, study it, change it and share it under the AGPL's conditions.
@@ -14,8 +14,8 @@ Both cover the same code in this repository, including the AI features, the ERP 
 
 You do not need a commercial license if you can comply with the AGPL. In practice that covers, for example:
 
-- running an unmodified HoneyMOM in your own plant;
-- modifying HoneyMOM and offering the source code of your modified version to everyone who uses it over a network
+- running an unmodified SmartMOM in your own plant;
+- modifying SmartMOM and offering the source code of your modified version to everyone who uses it over a network
   (AGPL section 13), under the AGPL;
 - evaluation, teaching and research.
 
@@ -25,17 +25,17 @@ This page is a summary, not legal advice. The license text decides.
 
 You need a commercial license if you want to do any of the following without the AGPL's obligations:
 
-- ship HoneyMOM, or a product that contains or is derived from it, to customers without releasing your changes and
+- ship SmartMOM, or a product that contains or is derived from it, to customers without releasing your changes and
   your combined work under the AGPL;
-- offer HoneyMOM or a modified version as a hosted service (SaaS, managed MES/MOM) without offering the corresponding
+- offer SmartMOM or a modified version as a hosted service (SaaS, managed MES/MOM) without offering the corresponding
   source code to its users;
 - keep modifications or integrations (for example connectors, industry packs, custom screens) proprietary while
-  they are combined with HoneyMOM;
-- use HoneyMOM in an organisation whose policy does not allow AGPL software.
+  they are combined with SmartMOM;
+- use SmartMOM in an organisation whose policy does not allow AGPL software.
 
 ## What the commercial license includes
 
-- The right to use, modify and distribute HoneyMOM under terms without AGPL obligations, for the scope agreed in the
+- The right to use, modify and distribute SmartMOM under terms without AGPL obligations, for the scope agreed in the
   contract (number of sites, deployments or end customers, OEM or hosted use).
 - Support and maintenance: issue handling with agreed response times (SLA), security fixes and upgrade help.
 - Optional services: installation, plant onboarding (equipment connection, point tables, delivery packages), data
@@ -48,7 +48,7 @@ Prices depend on the scope. Ask us for a quote.
 - E-mail: dev@honeymeta.com
 - Website: https://www.honeymeta.com
 
-Please tell us your organisation, how you plan to use HoneyMOM (own plants, product, hosted service), the number of
+Please tell us your organisation, how you plan to use SmartMOM (own plants, product, hosted service), the number of
 sites or deployments, and the support level you need.
 
 ## Contributions

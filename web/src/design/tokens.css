@@ -1,4 +1,4 @@
-/* HoneyMOM design tokens (light "tech" style). Colors / font sizes / spacing / radii / shadows / motion are defined only here; pages and components always use var(--hm-*).
+/* SmartMOM design tokens (light "tech" style). Colors / font sizes / spacing / radii / shadows / motion are defined only here; pages and components always use var(--hm-*).
    See design/README.md. */
 :root {
   /* ---- Density: on large screens font size, spacing, control height and shell size scale with viewport width (1.0 / 1.125 / 1.25, breakpoints at the end of this file) ---- */
@@ -31,7 +31,7 @@
   --hm-cyan: #0ba5c4;
   --hm-cyan-soft: #e3f6fa;
   --hm-cyan-ink: #0a6f87;          /* Text on cyan / background for white text (contrast ≥ 4.5; --hm-cyan is only for lines and graphics) */
-  --hm-amber: #d9822b;             /* HoneyMOM brand color */
+  --hm-amber: #d9822b;             /* SmartMOM brand color */
   --hm-amber-soft: #fcf1e5;
   --hm-amber-ink: #9a5513;
   /* AI only: subtle cyan → blue → purple gradient, used only on AI-related badges, selection rings and button outlines */

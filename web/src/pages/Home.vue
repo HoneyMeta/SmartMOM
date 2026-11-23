@@ -178,7 +178,7 @@ const lay = usePoll<any>('/api/home/layout', 120000);
 const ck = computed(() => cockpit.data.value);
 const K = computed(() => ck.value?.kpi);
 const now = computed(() => live.data.value?.now || ck.value?.now || '');
-const company = computed(() => ck.value?.company || session.user?.company || $t('home.honeymom'));
+const company = computed(() => ck.value?.company || session.user?.company || $t('home.smartmom'));
 function retryLayout() { lay.data.value = null; call('GET', '/api/home/layout?refresh=1', undefined, true).then((d) => { lay.data.value = d; }).catch(() => {}); }
 
 // ---------------- Metrics ----------------

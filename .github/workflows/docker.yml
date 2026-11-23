@@ -1,4 +1,4 @@
-# Build the Docker image. Tags v* are published to ghcr.io/honeymeta/honeymom;
+# Build the Docker image. Tags v* are published to ghcr.io/honeymeta/smartmom;
 # pull requests and manual runs only build (nothing is pushed unless a tag is built).
 name: Docker image
 
@@ -22,7 +22,7 @@ permissions:
   packages: write
 
 env:
-  IMAGE: ghcr.io/honeymeta/honeymom
+  IMAGE: ghcr.io/honeymeta/smartmom
 
 jobs:
   image:
@@ -48,7 +48,7 @@ jobs:
             type=ref,event=pr
             type=sha,enable=${{ github.event_name == 'workflow_dispatch' }}
           labels: |
-            org.opencontainers.image.title=HoneyMOM
+            org.opencontainers.image.title=SmartMOM
             org.opencontainers.image.description=Manufacturing operations management (MES/MOM) with ERP, quality, maintenance, inventory, scheduling and AI
             org.opencontainers.image.licenses=AGPL-3.0-or-later
             org.opencontainers.image.vendor=HoneyMeta

@@ -1,4 +1,4 @@
-"""用官方 MCP Python SDK（pip 包 mcp）当客户端核对蜂元智能 MOM 的 MCP 服务（tests/ai50_check.py 调用；需要单独装 mcp，不进 requirements）。
+"""用官方 MCP Python SDK（pip 包 mcp）当客户端核对智能 MOM 的 MCP 服务（tests/ai50_check.py 调用；需要单独装 mcp，不进 requirements）。
 
 python tests/mcp_sdk_client.py http <MES 地址>/mcp <API 密钥>
 python tests/mcp_sdk_client.py stdio <python.exe> <启动脚本或 -m> <API 密钥> [工作目录]

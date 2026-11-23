@@ -17,7 +17,7 @@
       <span class="spk" aria-hidden="true" />{{ aiText }}
     </button>
     <span class="sep wide" />
-    <span class="it ver wide">{{ $t('common.honeymom') }}</span>
+    <span class="it ver wide">{{ $t('common.smartmom') }}</span>
   </footer>
 </template>
 

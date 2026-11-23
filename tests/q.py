@@ -3,7 +3,7 @@ import sys
 
 import sqlalchemy as sa
 
-from honeymom import db
+from smartmom import db
 
 sys.stdout.reconfigure(encoding='utf-8')
 db.init()

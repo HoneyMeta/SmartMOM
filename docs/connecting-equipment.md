@@ -1,6 +1,6 @@
 # Connecting equipment
 
-HoneyMOM collects machine data itself; no separate gateway product is required. This page explains the factory model,
+SmartMOM collects machine data itself; no separate gateway product is required. This page explains the factory model,
 the supported protocols, how to onboard a plant from a delivery package, and how to use the replayer.
 
 ## Concepts
@@ -44,7 +44,7 @@ time, reports, OEE and durations stay consistent.
 | `http` | – | – | pushed by point code or address, see below |
 | `sql` | SQLAlchemy URL (`postgresql+psycopg://…`, `mssql+pyodbc://…`, `sqlite:///…`) | `table` or `query` (with a `:wm` parameter), `tag_col`, `value_col`, `ts_col`, `watermark`, `layout` (`long` = one value per row, `wide` = one column per tag), `interval_s`, `batch` | long layout: value of the tag column; wide layout: column name |
 
-MQTT topics that follow the HoneyMOM naming convention look like `<prefix><area>/<device>/<point path>`. A line
+MQTT topics that follow the SmartMOM naming convention look like `<prefix><area>/<device>/<point path>`. A line
 gateway can also publish part events on `<prefix>_mes/part` and the production log on `<prefix>_mes/event`.
 
 ISO 8601 timestamps with a time zone (MQTT `ts`) and OPC UA SourceTimestamps are converted to the server's local time
@@ -151,7 +151,7 @@ replayer and import it:
 python -m replayer package --host 127.0.0.1 --out foundry-housing-replayer.zip
 ```
 
-`--host` is the address HoneyMOM uses to reach the replayer (`--mqtt-port`, `--opcua-port`, `--opcua-path` and
+`--host` is the address SmartMOM uses to reach the replayer (`--mqtt-port`, `--opcua-port`, `--opcua-path` and
 `--modbus-port` change the other parts). Then upload the zip under **Factory Model & Connectivity → Overview & Import
 → Upload Package (zip)**.
 

@@ -97,14 +97,14 @@ def main():
         url = f'{base}/{dbname}'
     print(f'数据库：{a.db}  目录：{work}', flush=True)
     t_all = time.time()
-    from honeymom import auth, db, migrations, seed
+    from smartmom import auth, db, migrations, seed
     db.init(url)
     seed.run()
     check('迁移后结构与 schema.py 一致', migrations.check(db.engine) == [])
-    from honeymom.app import build_app
-    from honeymom.schema import ERP_TABLES, TABLES
-    from honeymom.services.warehouse import move
-    from honeymom.erp import core, integration, voucher
+    from smartmom.app import build_app
+    from smartmom.schema import ERP_TABLES, TABLES
+    from smartmom.services.warehouse import move
+    from smartmom.erp import core, integration, voucher
     base_url = serve(build_app())
     from mocks import kingdee_mock, webhook_sink, yonyou_mock
     KD, YY, SINK = serve(kingdee_mock.build()), serve(yonyou_mock.build()), serve(webhook_sink.build())
@@ -469,7 +469,7 @@ def main():
     st, ag = http('GET', f"/api/finance/ageing?side=ar&partner={custs['西岭重卡']['id']}", token=FIN)
     row = (ag.get('rows') or [{}])[0]
     with db.engine.connect() as c:
-        from honeymom.erp.sales import receivable
+        from smartmom.erp.sales import receivable
         bal = receivable(c, custs['西岭重卡']['id'])
     check('账龄合计 = 应收余额（发货 − 退货 − 收款）', st == 200 and abs(row.get('total', 0) - bal) < 0.01, f"{row.get('total')} vs {bal}")
     st, cr_ = http('GET', f"/api/sales/credit/{custs['西岭重卡']['id']}", token=SALES)
@@ -838,7 +838,7 @@ def main():
     st, r = http('POST', '/api/erp/doc/sales_order', {'customer': custs['北辰重卡']['id'], 'plant': p2, 'lines': [{'material': FG, 'qty': 3}]}, ADMIN)
     SO_P2 = r['id']
     act('sales_order', SO_P2, 'confirm')
-    from honeymom import perms as perms_m
+    from smartmom import perms as perms_m
     perms_m.invalidate()
     SALES2 = login('sales2')
     st, lst = http('GET', '/api/erp/doc/sales_order?size=500', token=SALES2)
@@ -909,7 +909,7 @@ def main():
     # ───────────────────────── N 导入（M3 通用导入框架）─────────────────────────
     section('N 导入（M3 通用导入框架登记的 ERP 导入器）')
     try:
-        from honeymom.impl import importer as imp
+        from smartmom.impl import importer as imp
     except Exception:          # noqa: BLE001
         imp = None
     if imp is None:

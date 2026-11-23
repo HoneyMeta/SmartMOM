@@ -1,4 +1,4 @@
-# HoneyMOM plant data replayer
+# SmartMOM plant data replayer
 # Copyright (C) 2026 HoneyMeta
 #
 # This program is free software: you can redistribute it and/or modify it under the terms of the

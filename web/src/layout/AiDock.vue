@@ -56,7 +56,7 @@
         </div>
         <div class="msgs" ref="box">
           <div v-if="!msgs.length" class="hello">
-            <div class="hh"><span class="spk big" />{{ $t('aiDock.iMHoneymomAiI') }}</div>
+            <div class="hh"><span class="spk big" />{{ $t('aiDock.iMSmartmomAiI') }}</div>
             <ul class="how">
               <li><kbd>Ctrl</kbd>{{ $t('aiDock.clickKpisMachinesOrTable') }}</li>
               <li>{{ $t('aiDock.rightClickAnyDataExplain') }}</li>

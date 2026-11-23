@@ -1,13 +1,13 @@
 # AI features
 
-HoneyMOM's AI features are part of the open-source code. They use an OpenAI-compatible model endpoint that you
-configure. HoneyMOM ships with no model endpoint, model name or key: until base URL, model and key are all configured,
+SmartMOM's AI features are part of the open-source code. They use an OpenAI-compatible model endpoint that you
+configure. SmartMOM ships with no model endpoint, model name or key: until base URL, model and key are all configured,
 no model is called and the AI features use their rule-based versions. In addition, every AI feature is **off by
-default** until an administrator turns it on. Everything else in HoneyMOM works without a model.
+default** until an administrator turns it on. Everything else in SmartMOM works without a model.
 
 ## 1. Configure a model
 
-HoneyMOM calls `POST <base_url>/chat/completions` in the OpenAI format, with `tools` (function calling) for the
+SmartMOM calls `POST <base_url>/chat/completions` in the OpenAI format, with `tools` (function calling) for the
 assistant and agents. Any service or self-hosted server with that API works, for example a hosted provider, vLLM,
 Ollama (`http://host:11434/v1`) or LM Studio. Use a model that supports tool calling.
 
@@ -67,7 +67,7 @@ On the same page you choose how AI calls are answered:
 
 - **Live:** calls the configured model.
 - **Demo:** replays recorded answers and makes no model calls (no tokens). Questions without a recording get the
-  rule-based answer. Recordings are in `honeymom/fixtures/ai_demo/<feature>.json`; `MOM_AI_FIXTURES` points to another
+  rule-based answer. Recordings are in `smartmom/fixtures/ai_demo/<feature>.json`; `MOM_AI_FIXTURES` points to another
   directory.
 - **Record demo:** calls the model and records the answers for demo mode.
 
@@ -110,7 +110,7 @@ added with **Ctrl+click** (or the right-click menu: ask AI, explain this number,
 
 ### MCP endpoint
 
-External AI tools can query HoneyMOM through the Model Context Protocol.
+External AI tools can query SmartMOM through the Model Context Protocol.
 
 1. Turn on the master switch and **MCP data interface** (`mcp`).
 2. Create a key under **System → MCP Access** (permission presets, line scope, expiry, IP allow-list; the key is
@@ -120,7 +120,7 @@ External AI tools can query HoneyMOM through the Model Context Protocol.
    | Transport | Address / command | Authentication |
    |---|---|---|
    | Streamable HTTP | `POST http://<server>:8900/mcp` | header `X-API-Key: hmk_...` or `Authorization: Bearer hmk_...` |
-   | stdio (on the server) | `python -m honeymom mcp --key hmk_...` (or env `HONEYMOM_API_KEY`, old name `HONEYMES_API_KEY`) | the same key |
+   | stdio (on the server) | `python -m smartmom mcp --key hmk_...` (or env `MOM_API_KEY`, old names `HONEYMOM_API_KEY`, `HONEYMES_API_KEY`) | the same key |
 
 Tools are listed only when the key has the permission: search and records, work orders, production, quality, OEE,
 equipment, maintenance, energy, factory model and tags, time series (raw, rollups, latest, events), cycle analysis,
@@ -134,6 +134,6 @@ requests are checked against `mcp_allowed_origins`. Client examples (Claude Desk
 - AI features send prompts to the endpoint you configure. Prompts contain plant data: query results, page context,
   selected records, knowledge-base excerpts. Choose a provider whose terms fit your data, or run a model on your own
   hardware.
-- The model never gets database credentials. Queries run in HoneyMOM under the user's permissions and data scope.
+- The model never gets database credentials. Queries run in SmartMOM under the user's permissions and data scope.
 - Every model call ends with an instruction to answer in the user's UI language.
 - Model usage can be limited by turning individual features off.
