@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.0 (unreleased)
+## 1.0.0 (2026-11-23)
 
 The first open-source release. The feature set is described in the [README](README.md).
 
